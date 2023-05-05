@@ -11,6 +11,7 @@ import FileUploadIcon from "@mui/icons-material/FileUpload";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Autocomplete } from "@mui/material";
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 
 const LeadForm = () => {
   const { id } = useParams();
@@ -33,7 +34,7 @@ const LeadForm = () => {
     // picture: [],
   });
   const [saving, setSaving] = useState(false);
-  const [picture, setImage] = useState(null);
+  const [picture, setPicture] = useState(null);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [jobDesc, setJobDesc] = useState([]);
@@ -52,7 +53,7 @@ const LeadForm = () => {
 
       const fileReader = new FileReader();
       fileReader.onload = function (e) {
-        setImage(e.target.result);
+        setPicture(e.target.result);
       };
       fileReader.readAsDataURL(file);
     }
@@ -65,7 +66,7 @@ const LeadForm = () => {
     }
   };
   const handleDelete = () => {
-    setImage(null);
+    setPicture(null);
   };
 
   const handleJobInputchange = async (e, value) => {
@@ -135,6 +136,8 @@ const LeadForm = () => {
       if (id) {
         await api.updateLeads(id, newdata);
         setSaving(false);
+        window.alert("data updated");
+        navigate("/leads");
       } else {
         const response = await api.addLead(newdata);
 
@@ -357,7 +360,7 @@ const LeadForm = () => {
             </Grid>
 
             <Grid item sm={6}>
-              <Button variant="contained" component="label">
+              <Button variant="contained" component="label" sx={{ mr: 1 }}>
                 <FileUploadIcon />
                 Upload File
                 <input
@@ -368,9 +371,16 @@ const LeadForm = () => {
                   onChange={handleChange}
                 />
               </Button>
-              <Button onClick={handleDelete}>
-                <CloseIcon />
-              </Button>
+              {picture && (
+                <Button
+                  onClick={handleDelete}
+                  variant="contained"
+                  component="label"
+                  sx={{ mr: 1 }}
+                >
+                  <CancelPresentationIcon />
+                </Button>
+              )}
             </Grid>
             <Grid item sm={6}>
               {picture && (

@@ -98,6 +98,8 @@ const Addopportunities = () => {
       if (id) {
         await api.updateOpportunity(id, data);
         setSaving(false);
+        window.alert("data updated");
+        navigate("/opportunities");
       } else {
         const response = await api.addOpportunites(data);
         setSaving(false);

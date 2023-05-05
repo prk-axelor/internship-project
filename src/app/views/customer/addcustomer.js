@@ -9,7 +9,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Autocomplete, Grid } from "@mui/material";
 import { useDebounce } from "app/services/hooks";
-import CloseIcon from "@mui/icons-material/Close";
+
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 
 const CustomerForm = () => {
   const { id } = useParams();
@@ -31,7 +32,7 @@ const CustomerForm = () => {
     team: "",
   });
   const [saving, setSaving] = useState(false);
-  const [image, setImage] = useState(null);
+  const [picture, setPicture] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({});
   const [assign, setAssign] = useState([]);
@@ -45,10 +46,10 @@ const CustomerForm = () => {
     setCustomer({ ...customer, [name]: value });
     if (name === "image") {
       const file = e.target.files[0];
-      setImage(file);
+      setPicture(file);
       const fileReader = new FileReader();
       fileReader.onload = function (e) {
-        setImage(e.target.result);
+        setPicture(e.target.result);
       };
       fileReader.readAsDataURL(file);
     }
@@ -64,7 +65,7 @@ const CustomerForm = () => {
   const handleSubmit = async (e) => {
     let newdata = {
       ...customer,
-      image,
+      picture,
     };
     e.preventDefault();
     const error = validate(customer);
@@ -73,6 +74,8 @@ const CustomerForm = () => {
       if (id) {
         await api.updateCustomer(id, newdata);
         setSaving(false);
+        window.alert("data updated");
+        navigate("/customer");
       } else {
         const response = await api.addCustomer(newdata);
         setSaving(false);
@@ -84,7 +87,7 @@ const CustomerForm = () => {
     }
   };
   const handleDelete = () => {
-    setImage(null);
+    setPicture(null);
   };
 
   const handleCategoryInputChange = async (e, value) => {
@@ -384,18 +387,27 @@ const CustomerForm = () => {
         </Grid>
 
         <Grid item sm={6} height={150}>
-          <Button variant="contained" component="label">
+          <Button variant="contained" component="label" sx={{ mr: 1 }}>
             <FileUploadIcon />
             Upload File
             <input type="file" hidden name="image" onChange={handleChange} />
           </Button>
-          <Button onClick={handleDelete}>
-            <CloseIcon />
-          </Button>
+          {picture && (
+            <Button
+              onClick={handleDelete}
+              variant="contained"
+              component="label"
+              sx={{ mr: 1 }}
+            >
+              <CancelPresentationIcon />
+            </Button>
+          )}
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          {image && <img src={image} alt="author" width={100} height={100} />}
+          {picture && (
+            <img src={picture} alt="author" width={100} height={100} />
+          )}
         </Grid>
         <Grid>
           {id ? (

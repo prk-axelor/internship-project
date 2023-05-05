@@ -47,11 +47,12 @@ export function ContactsCard() {
       let req = {
         data: {
           operator: "or",
+
           criteria: [
             {
               fieldName: "simpleFullName",
               operator: "like",
-              value: "a",
+              value,
             },
           ],
           model: "com.axelor.apps.base.db.Partner",
@@ -169,15 +170,16 @@ export function ContactsCard() {
                                 variant="h5"
                                 component="div"
                               >
-                                {d.companyStr}
+                                {d.simpleFullName}
                               </Typography>
                               <Typography
                                 gutterBottom
                                 variant="h5"
                                 component="div"
                               >
-                                {d.name}
+                                {d.mobilePhone}
                               </Typography>
+
                               <Typography
                                 variant="body2"
                                 color="text.secondary"

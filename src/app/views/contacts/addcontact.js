@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 import { Autocomplete, CircularProgress, Grid } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDebounce } from "app/services/hooks";
-import CloseIcon from "@mui/icons-material/Close";
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 
 const Contactform = () => {
   const { fetchJob, fetchAddress } = api;
@@ -15,7 +15,7 @@ const Contactform = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [image, setImage] = useState(null);
+  const [picture, setPicture] = useState(null);
   const [error, setError] = useState({});
   const [SearchJobTitle, setSearchJobTitle] = useState([]);
   const [address, setAddress] = useState([]);
@@ -64,20 +64,20 @@ const Contactform = () => {
     api.imageUploader(file);
     const fileReader = new FileReader();
     fileReader.onload = function (e) {
-      setImage(e.target.result);
+      setPicture(e.target.result);
     };
     fileReader.readAsDataURL(file);
     //uploadImage(file);
   };
   const handleDelete = () => {
-    setImage(null);
+    setPicture(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     let newdata = {
       ...data,
-      image,
+      picture,
     };
     const errors = validate(data);
     setError(errors);
@@ -85,6 +85,8 @@ const Contactform = () => {
       if (id) {
         await api.updateContact(id, newdata);
         setSaving(false);
+        window.alert("data updated");
+        navigate("/contacts");
       } else {
         const response = await api.addContact(newdata);
         setSaving(false);
@@ -298,17 +300,26 @@ const Contactform = () => {
         </Grid>
 
         <Grid item sm={6} height={150}>
-          <Button variant="contained" component="label">
+          <Button variant="contained" component="label" sx={{ mr: 1 }}>
             <FileUploadIcon />
             Upload File
             <input type="file" hidden name="image" onChange={handleUpload} />
           </Button>
-          <Button onClick={handleDelete}>
-            <CloseIcon />
-          </Button>
+          {picture && (
+            <Button
+              onClick={handleDelete}
+              variant="contained"
+              component="label"
+              sx={{ mr: 1 }}
+            >
+              <CancelPresentationIcon />
+            </Button>
+          )}
         </Grid>
         <Grid item xs={12} sm={6}>
-          {image && <img src={image} alt="author" width={100} height={100} />}
+          {picture && (
+            <img src={picture} alt="author" width={100} height={100} />
+          )}
         </Grid>
 
         <Grid item xs={12} sm={6}>

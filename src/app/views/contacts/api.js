@@ -29,12 +29,15 @@ const getContact = (id) => {
         "mobilePhone",
         "simpleFullName",
         "partnerSeq",
-        "emailAddress.address",
+        "emailAddress",
         "mainPartner.simpleFullName",
         "fixedPhone",
         "mainAddress",
         "name",
       ],
+      related: {
+        emailAddress: ["address"],
+      },
     })
     .then(({ data }) => data?.data[0]);
 };
@@ -44,14 +47,17 @@ const updateContact = (id, data) => {
 const searchContacts = (data) => {
   return getContacts({
     fields: [
-      "id",
-      "name",
-      "functionBusinessCard",
-      "timeSlot",
-      "fixedPhone",
+      "partnerCategory",
       "mobilePhone",
-      "name",
+      "simpleFullName",
       "emailAddress.address",
+      "mainPartner.simpleFullName",
+      "partnerSeq",
+      "fullName",
+      "fixedPhone",
+      "mainAddress",
+      "picture",
+      "titleSelect",
     ],
     ...data,
   });

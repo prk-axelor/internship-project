@@ -47,13 +47,16 @@ const getCustomer = (id) => {
         "name",
         "mainAddress.fullName",
         "fixedPhone",
-        "emailAddress.address",
+        "emailAddress",
         "partnerCategory.name",
         "fiscalPosition.code",
         "registrationCode",
         "companyStr",
         "registrationCode",
       ],
+      related: {
+        emailAddress: ["address"],
+      },
     })
     .then(({ data }) => data?.data[0]);
 };

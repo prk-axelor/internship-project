@@ -41,7 +41,7 @@ const getLead = (id) => {
       fields: [
         "statusSelect",
         "firstName",
-        "emailAddress.address",
+        "emailAddress",
         "contactDate",
         "name",
         "fixedPhone",
@@ -54,7 +54,7 @@ const getLead = (id) => {
         "picture",
       ],
       related: {
-        picture: [],
+        emailAddress: ["address"],
       },
     })
     .then(({ data }) => data?.data[0]);
