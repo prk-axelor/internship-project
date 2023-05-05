@@ -37,7 +37,26 @@ const addLead = (data) => {
 };
 const getLead = (id) => {
   return rest
-    .post(`/${model}/${id}/fetch`, {})
+    .post(`/${model}/${id}/fetch`, {
+      fields: [
+        "statusSelect",
+        "firstName",
+        "emailAddress.address",
+        "contactDate",
+        "name",
+        "fixedPhone",
+        "updatedOn",
+        "createdOn",
+        "enterpriseName",
+        "user",
+        "jobTitleFunction",
+        "primaryPostalCode",
+        "picture",
+      ],
+      related: {
+        picture: [],
+      },
+    })
     .then(({ data }) => data?.data[0]);
 };
 const updateLeads = (id, data) => {

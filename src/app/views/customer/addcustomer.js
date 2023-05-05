@@ -9,6 +9,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Autocomplete, Grid } from "@mui/material";
 import { useDebounce } from "app/services/hooks";
+import CloseIcon from "@mui/icons-material/Close";
+
 const CustomerForm = () => {
   const { id } = useParams();
   const { fetchCategory, fetchSource, fetchAssign, fetchTeam, fetchLanguage } =
@@ -81,6 +83,10 @@ const CustomerForm = () => {
       }
     }
   };
+  const handleDelete = () => {
+    setImage(null);
+  };
+
   const handleCategoryInputChange = async (e, value) => {
     const response = await fetchCategory(value);
     setCatergory(response?.data?.data);
@@ -327,7 +333,7 @@ const CustomerForm = () => {
             id="grouped-demo"
             options={assign}
             isOptionEqualToValue={(option, value) =>
-              option.fullName === value.fullName
+              option.value === value.value
             }
             getOptionLabel={(option) => {
               return option?.fullName || "";
@@ -377,11 +383,14 @@ const CustomerForm = () => {
           />
         </Grid>
 
-        <Grid item xs={12} sm={6} height={150}>
+        <Grid item sm={6} height={150}>
           <Button variant="contained" component="label">
             <FileUploadIcon />
             Upload File
             <input type="file" hidden name="image" onChange={handleChange} />
+          </Button>
+          <Button onClick={handleDelete}>
+            <CloseIcon />
           </Button>
         </Grid>
 

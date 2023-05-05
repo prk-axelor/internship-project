@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import { Autocomplete, CircularProgress, Grid } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDebounce } from "app/services/hooks";
+import CloseIcon from "@mui/icons-material/Close";
 
 const Contactform = () => {
   const { fetchJob, fetchAddress } = api;
@@ -26,9 +27,9 @@ const Contactform = () => {
     fixedPhone: "",
     mobilePhone: "",
     name: "",
-    emailAddress: {
-      address: "",
-    },
+    emailAddress: { address: "" },
+    picture: [],
+
     jobTitleFunction: "",
     mainAddress: "",
   });
@@ -39,6 +40,16 @@ const Contactform = () => {
       return { ...prevData, [name]: value };
     });
 
+    // if (name === "image") {
+    //   const file = e.target.files[0];
+    //   setImage(file);
+    //   api.Imageuploader(file);
+    //   // const fileReader = new FileReader();
+    //   // fileReader.onload = function (e) {
+    //   //   setImage(e.target.result);
+    //   // };
+    //   // fileReader.readAsDataURL(file);
+    // }
     if (name === "address") {
       setData((prevData) => {
         const newData = { ...prevData };
@@ -46,15 +57,20 @@ const Contactform = () => {
         return newData;
       });
     }
-    if (name === "image") {
-      const file = e.target.files[0];
-      setImage(file);
-      const fileReader = new FileReader();
-      fileReader.onload = function (e) {
-        setImage(e.target.result);
-      };
-      fileReader.readAsDataURL(file);
-    }
+  };
+  const handleUpload = (e) => {
+    const file = e.target.files[0];
+    console.log("file", file);
+    api.imageUploader(file);
+    const fileReader = new FileReader();
+    fileReader.onload = function (e) {
+      setImage(e.target.result);
+    };
+    fileReader.readAsDataURL(file);
+    //uploadImage(file);
+  };
+  const handleDelete = () => {
+    setImage(null);
   };
 
   const handleSubmit = async (e) => {
@@ -166,7 +182,7 @@ const Contactform = () => {
             label="First name"
             variant="outlined"
             name="firstName"
-            value={data.firstName || ""}
+            value={data.partnerSeq || ""}
             onChange={handleChange}
             fullWidth
           />
@@ -180,7 +196,7 @@ const Contactform = () => {
             onChange={handleChange}
             error={error?.name ? true : false}
             helperText={error?.name ? `${error.name}` : ""}
-            value={data.name || ""}
+            value={data.simpleFullName || ""}
             fullWidth
           />
         </Grid>
@@ -285,12 +301,16 @@ const Contactform = () => {
           <Button variant="contained" component="label">
             <FileUploadIcon />
             Upload File
-            <input type="file" hidden name="image" onChange={handleChange} />
+            <input type="file" hidden name="image" onChange={handleUpload} />
+          </Button>
+          <Button onClick={handleDelete}>
+            <CloseIcon />
           </Button>
         </Grid>
         <Grid item xs={12} sm={6}>
           {image && <img src={image} alt="author" width={100} height={100} />}
         </Grid>
+
         <Grid item xs={12} sm={6}>
           {id ? (
             <Button

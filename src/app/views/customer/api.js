@@ -40,7 +40,21 @@ const searchCustomer = (data) => {
 };
 const getCustomer = (id) => {
   return rest
-    .post(`/${model}/${id}/fetch`, {})
+    .post(`/${model}/${id}/fetch`, {
+      fields: [
+        "id",
+        "partnerSeq",
+        "name",
+        "mainAddress.fullName",
+        "fixedPhone",
+        "emailAddress.address",
+        "partnerCategory.name",
+        "fiscalPosition.code",
+        "registrationCode",
+        "companyStr",
+        "registrationCode",
+      ],
+    })
     .then(({ data }) => data?.data[0]);
 };
 const delCustomer = (records) => {

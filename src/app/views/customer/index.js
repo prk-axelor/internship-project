@@ -141,8 +141,15 @@ export function CustomerList() {
               onChange={(e) => setvalue(e.target.value)}
               style={{ marginRight: "1em" }}
               onKeyPress={(e) => {
-                if (e.key === "Enter") {
+                if (value && e.key === "Enter") {
                   handleSearch(e);
+                } else if (e.key === "Enter") {
+                  api
+                    .getCustomers({ limit: LIMIT, offset: (page - 1) * LIMIT })
+                    .then(({ data, total }) => {
+                      setData(data);
+                      setTotal(total);
+                    });
                 }
               }}
             />

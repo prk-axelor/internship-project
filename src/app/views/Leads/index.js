@@ -138,8 +138,15 @@ export function LeadList() {
             variant="outlined"
             onChange={(e) => setvalue(e.target.value)}
             onKeyPress={(e) => {
-              if (e.key === "Enter") {
+              if (value && e.key === "Enter") {
                 handleSearch(e);
+              } else if (e.key === "Enter") {
+                api
+                  .getLeads({ limit: LIMIT, offset: (page - 1) * LIMIT })
+                  .then(({ data, total }) => {
+                    setData(data);
+                    setTotal(total);
+                  });
               }
             }}
           />
@@ -176,7 +183,6 @@ export function LeadList() {
                       <TableCell>Fixed phone</TableCell>
                       <TableCell>Address</TableCell>
                       <TableCell>ContactDate</TableCell>
-
                       <TableCell>Delete</TableCell>
                       <TableCell>Update</TableCell>
                     </TableRow>

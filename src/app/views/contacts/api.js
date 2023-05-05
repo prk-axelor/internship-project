@@ -1,4 +1,5 @@
 import { rest } from "../../services/rest";
+
 const model = "ws/rest/com.axelor.apps.base.db.Partner";
 const getContacts = (reqBody = {}) => {
   return rest
@@ -22,7 +23,19 @@ const addContact = (data) => {
 };
 const getContact = (id) => {
   return rest
-    .post(`/${model}/${id}/fetch`, {})
+    .post(`/${model}/${id}/fetch`, {
+      fields: [
+        "jobTitleFunction",
+        "mobilePhone",
+        "simpleFullName",
+        "partnerSeq",
+        "emailAddress.address",
+        "mainPartner.simpleFullName",
+        "fixedPhone",
+        "mainAddress",
+        "name",
+      ],
+    })
     .then(({ data }) => data?.data[0]);
 };
 const updateContact = (id, data) => {
@@ -74,6 +87,26 @@ const fetchAddress = () => {
     fields: ["id", "fullName"],
   });
 };
+const imageUploader = (file) => {
+  console.log(file);
+  const param = {
+    file: file,
+    request: {
+      data: {
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+
+        $upload: { file: {} },
+      },
+    },
+  };
+  return rest.post("/ws/rest/com.axelor.meta.db.MetaFile/upload", param);
+};
+// const imageUploader = () => {
+//   return rest.post("/ws/rest/com.axelor.meta.db.MetaFile/upload", {});
+// };
+
 const api = {
   getContacts,
   addContact,
@@ -84,5 +117,7 @@ const api = {
   fetchJob,
   fecthAction,
   fetchAddress,
+  imageUploader,
 };
+
 export { api };

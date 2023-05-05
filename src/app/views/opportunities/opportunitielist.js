@@ -129,8 +129,18 @@ const Opportunitielist = () => {
               style={{ marginRight: "1em" }}
               onChange={(e) => setValue(e.target.value)}
               onKeyPress={(e) => {
-                if (e.key === "Enter") {
+                if (value && e.key === "Enter") {
                   handleSearch(e);
+                } else if (e.key === "Enter") {
+                  api
+                    .getOpportunites({
+                      limit: LIMIT,
+                      offset: (page - 1) * LIMIT,
+                    })
+                    .then(({ data, total }) => {
+                      setData(data);
+                      setTotal(total);
+                    });
                 }
               }}
             />

@@ -5,6 +5,7 @@ import { api } from "./api";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDebounce } from "app/services/hooks";
 import Grid from "@mui/material/Grid";
+import CloseIcon from "@mui/icons-material/Close";
 
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import Box from "@mui/material/Box";
@@ -29,9 +30,10 @@ const LeadForm = () => {
     primaryPostalCode: "",
     primaryState: "",
     jobTitleFunction: "",
+    // picture: [],
   });
   const [saving, setSaving] = useState(false);
-  const [image, setImage] = useState(null);
+  const [picture, setImage] = useState(null);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [jobDesc, setJobDesc] = useState([]);
@@ -45,7 +47,7 @@ const LeadForm = () => {
       [name]: value,
     });
 
-    if (name === "image") {
+    if (name === "picture") {
       const file = e.target.files[0];
 
       const fileReader = new FileReader();
@@ -62,6 +64,10 @@ const LeadForm = () => {
       });
     }
   };
+  const handleDelete = () => {
+    setImage(null);
+  };
+
   const handleJobInputchange = async (e, value) => {
     const response = await fetchJob(value);
     setJobDesc(response?.data?.data);
@@ -120,7 +126,7 @@ const LeadForm = () => {
 
     let newdata = {
       ...data,
-      image,
+      picture,
     };
     const errors = validate(data);
     setErrors(errors);
@@ -185,7 +191,7 @@ const LeadForm = () => {
       </Box>
     );
   }
-
+  console.log("data?.picture >>>", data);
   return (
     <>
       {console.log(data?.jobTitleFunction)}
@@ -357,14 +363,18 @@ const LeadForm = () => {
                 <input
                   type="file"
                   hidden
-                  name="image"
+                  name="picture"
+                  value={data?.picture || ""}
                   onChange={handleChange}
                 />
               </Button>
+              <Button onClick={handleDelete}>
+                <CloseIcon />
+              </Button>
             </Grid>
             <Grid item sm={6}>
-              {image && (
-                <img src={image} alt="author" width={100} height={100} />
+              {picture && (
+                <img src={picture} alt="author" width={100} height={100} />
               )}
             </Grid>
             <Grid item sm={6}>
