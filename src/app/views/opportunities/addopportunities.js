@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "./api";
 import { useDebounce } from "app/services/hooks";
+import FlashMessage from "app/services/flash-message";
 
 const Addopportunities = () => {
   const { id } = useParams();
@@ -34,6 +35,7 @@ const Addopportunities = () => {
   const [source, setSource] = useState([]);
   const [currency, setcurrency] = useState([]);
   const [oppertunity, setOppertunity] = useState([]);
+  const [success, setSucces] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -98,8 +100,8 @@ const Addopportunities = () => {
       if (id) {
         await api.updateOpportunity(id, data);
         setSaving(false);
-        window.alert("data updated");
-        navigate("/opportunities");
+        setSucces(true);
+        navigate("../new");
       } else {
         const response = await api.addOpportunites(data);
         setSaving(false);
@@ -336,6 +338,7 @@ const Addopportunities = () => {
             </Button>
           </Grid>
         </Grid>
+        {success ? <FlashMessage /> : ""}
       </div>
     </div>
   );

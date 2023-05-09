@@ -9,8 +9,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Autocomplete, Grid } from "@mui/material";
 import { useDebounce } from "app/services/hooks";
-
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import FlashMessage from "app/services/flash-message";
 
 const CustomerForm = () => {
   const { id } = useParams();
@@ -30,6 +30,7 @@ const CustomerForm = () => {
     user: "",
     source: "",
     team: "",
+    isCustomer: true,
   });
   const [saving, setSaving] = useState(false);
   const [picture, setPicture] = useState(null);
@@ -40,6 +41,7 @@ const CustomerForm = () => {
   const [source, setSource] = useState([]);
   const [team, setTeam] = useState([]);
   const [language, setLanguage] = useState([]);
+  const [success, setSucces] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -73,9 +75,9 @@ const CustomerForm = () => {
     if (Object.keys(error).length === 0) {
       if (id) {
         await api.updateCustomer(id, newdata);
+        setSucces(true);
         setSaving(false);
-        window.alert("data updated");
-        navigate("/customer");
+        navigate("../new");
       } else {
         const response = await api.addCustomer(newdata);
         setSaving(false);
@@ -444,6 +446,7 @@ const CustomerForm = () => {
           </Button>
         </Grid>
       </Grid>
+      {success ? <FlashMessage /> : ""}
     </div>
   );
 };

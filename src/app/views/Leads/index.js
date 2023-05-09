@@ -56,7 +56,6 @@ export function LeadList() {
     if (value) {
       let req = {
         data: {
-          operator: "and",
           criteria: [
             {
               fieldName: "firstName",

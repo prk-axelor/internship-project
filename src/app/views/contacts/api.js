@@ -14,6 +14,7 @@ const getContacts = (reqBody = {}) => {
         "fixedPhone",
         "mainAddress",
       ],
+
       ...reqBody,
     })
     .then((data) => data?.data);
@@ -34,6 +35,8 @@ const getContact = (id) => {
         "fixedPhone",
         "mainAddress",
         "name",
+        "firstName",
+        "timeSlot",
       ],
       related: {
         emailAddress: ["address"],
@@ -73,6 +76,11 @@ const fetchJob = (value) => {
     fields: ["id", "name", "code"],
   });
 };
+const fetchAddress = () => {
+  return rest.post("/ws/rest/com.axelor.apps.base.db.Address/search", {
+    fields: ["id", "fullName"],
+  });
+};
 const fecthAction = async (id, name) => {
   const response = await rest.post(`/ws/action`, {
     model: "com.axelor.apps.base.db.Partner",
@@ -88,11 +96,7 @@ const fecthAction = async (id, name) => {
     return response;
   }
 };
-const fetchAddress = () => {
-  return rest.post("/ws/rest/com.axelor.apps.base.db.Address/search", {
-    fields: ["id", "fullName"],
-  });
-};
+
 const imageUploader = (file) => {
   console.log(file);
   const param = {

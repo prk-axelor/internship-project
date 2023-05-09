@@ -9,6 +9,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useDebounce } from "app/services/hooks";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 
+import FlashMessage from "../../services/flash-message";
+
 const Contactform = () => {
   const { fetchJob, fetchAddress } = api;
   const navigate = useNavigate();
@@ -18,7 +20,7 @@ const Contactform = () => {
   const [picture, setPicture] = useState(null);
   const [error, setError] = useState({});
   const [SearchJobTitle, setSearchJobTitle] = useState([]);
-  const [address, setAddress] = useState([]);
+  const [address, setSearchAddress] = useState([]);
 
   const [data, setData] = useState({
     firstName: "",
@@ -29,10 +31,12 @@ const Contactform = () => {
     name: "",
     emailAddress: { address: "" },
     picture: [],
-
     jobTitleFunction: "",
     mainAddress: "",
+    isContact: "true",
   });
+  const [success, setSucces] = useState(false);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -40,16 +44,6 @@ const Contactform = () => {
       return { ...prevData, [name]: value };
     });
 
-    // if (name === "image") {
-    //   const file = e.target.files[0];
-    //   setImage(file);
-    //   api.Imageuploader(file);
-    //   // const fileReader = new FileReader();
-    //   // fileReader.onload = function (e) {
-    //   //   setImage(e.target.result);
-    //   // };
-    //   // fileReader.readAsDataURL(file);
-    // }
     if (name === "address") {
       setData((prevData) => {
         const newData = { ...prevData };
@@ -60,14 +54,13 @@ const Contactform = () => {
   };
   const handleUpload = (e) => {
     const file = e.target.files[0];
-    console.log("file", file);
+
     api.imageUploader(file);
     const fileReader = new FileReader();
     fileReader.onload = function (e) {
       setPicture(e.target.result);
     };
     fileReader.readAsDataURL(file);
-    //uploadImage(file);
   };
   const handleDelete = () => {
     setPicture(null);
@@ -85,8 +78,8 @@ const Contactform = () => {
       if (id) {
         await api.updateContact(id, newdata);
         setSaving(false);
-        window.alert("data updated");
-        navigate("/contacts");
+        setSucces(true);
+        navigate("../new");
       } else {
         const response = await api.addContact(newdata);
         setSaving(false);
@@ -116,7 +109,7 @@ const Contactform = () => {
   };
   const handleAddressInput = async (e, value) => {
     const response = await fetchAddress(value);
-    setAddress(response?.data?.data);
+    setSearchAddress(response?.data?.data);
   };
   const debouncedaddressChange = useDebounce(handleAddressInput);
 
@@ -129,6 +122,7 @@ const Contactform = () => {
       },
     });
   };
+
   const validate = (data) => {
     const errors = {};
     if (!data.name) {
@@ -155,9 +149,8 @@ const Contactform = () => {
     };
 
     fetchOptions(fetchJob, setSearchJobTitle);
-    fetchOptions(fetchAddress, setAddress);
+    fetchOptions(fetchAddress, setSearchAddress);
   }, [fetchJob, fetchAddress]);
-  console.log(SearchJobTitle);
 
   if (loading) {
     return (
@@ -184,7 +177,7 @@ const Contactform = () => {
             label="First name"
             variant="outlined"
             name="firstName"
-            value={data.partnerSeq || ""}
+            value={data.firstName || ""}
             onChange={handleChange}
             fullWidth
           />
@@ -198,7 +191,7 @@ const Contactform = () => {
             onChange={handleChange}
             error={error?.name ? true : false}
             helperText={error?.name ? `${error.name}` : ""}
-            value={data.simpleFullName || ""}
+            value={data.name || ""}
             fullWidth
           />
         </Grid>
@@ -227,21 +220,22 @@ const Contactform = () => {
             onChange={handleJobChange}
           />
         </Grid>
-
         <Grid item sm={6}>
           <Autocomplete
             id="grouped-demo"
             options={
               address?.map((a) => {
                 return {
-                  fullName: a.fullName,
-                  id: a.id,
+                  id: a?.id,
+                  fullName: a?.fullName,
                 };
               }) || []
             }
-            getOptionLabel={(option) => option?.fullName || ""}
             value={data?.mainAddress || null}
             fullWidth
+            getOptionLabel={(option) => {
+              return (option.id && `${option?.fullName}-${option?.id}`) || "";
+            }}
             isOptionEqualToValue={(option, value) => {
               return option?.value === value?.value;
             }}
@@ -250,6 +244,7 @@ const Contactform = () => {
             onChange={handleAddressChange}
           />
         </Grid>
+
         <Grid item sm={6}>
           <TextField
             type="tel"
@@ -293,7 +288,7 @@ const Contactform = () => {
             label="Time Slot"
             name="timeSlot"
             variant="outlined"
-            value={data.timeSlot || ""}
+            value={data?.timeSlot || ""}
             onChange={handleChange}
             fullWidth
           />
@@ -356,6 +351,8 @@ const Contactform = () => {
           </Button>
         </Grid>
       </Grid>
+
+      {success ? <FlashMessage /> : ""}
     </>
   );
 };

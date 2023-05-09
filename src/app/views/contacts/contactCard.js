@@ -25,7 +25,7 @@ export function ContactsCard() {
 
   useEffect(() => {
     setLoading(true);
-    api
+    const data = api
       .searchContacts({
         limit: LIMIT,
         offset: (page - 1) * LIMIT,
@@ -46,8 +46,6 @@ export function ContactsCard() {
     if (value) {
       let req = {
         data: {
-          operator: "or",
-
           criteria: [
             {
               fieldName: "simpleFullName",

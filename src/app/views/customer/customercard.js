@@ -55,7 +55,6 @@ const CustomerCard = () => {
     if (value) {
       let req = {
         data: {
-          operator: "or",
           criteria: [
             {
               fieldName: "name",

@@ -30,7 +30,6 @@ export function Opportunities() {
     if (value) {
       let req = {
         data: {
-          operator: "or",
           criteria: [
             {
               fieldName: "name",

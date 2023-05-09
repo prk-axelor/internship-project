@@ -5,13 +5,15 @@ import { api } from "./api";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDebounce } from "app/services/hooks";
 import Grid from "@mui/material/Grid";
-import CloseIcon from "@mui/icons-material/Close";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Autocomplete } from "@mui/material";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import FlashMessage from "../../services/flash-message";
 
 const LeadForm = () => {
   const { id } = useParams();
@@ -40,6 +42,8 @@ const LeadForm = () => {
   const [jobDesc, setJobDesc] = useState([]);
   const [city, setCity] = useState([]);
   const [country, setCountry] = useState([""]);
+  const [success, setSucces] = useState(false);
+  const [value, setValue] = useState();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,6 +51,7 @@ const LeadForm = () => {
       ...data,
       [name]: value,
     });
+    console.log(e.target);
 
     if (name === "picture") {
       const file = e.target.files[0];
@@ -134,10 +139,12 @@ const LeadForm = () => {
 
     if (Object.keys(errors)?.length === 0) {
       if (id) {
-        await api.updateLeads(id, newdata);
-        setSaving(false);
-        window.alert("data updated");
-        navigate("/leads");
+        await api.updateLeads(id, newdata).then((res) => {
+          setSaving(false);
+          setSucces(true);
+        });
+
+        navigate("../new");
       } else {
         const response = await api.addLead(newdata);
 
@@ -194,10 +201,9 @@ const LeadForm = () => {
       </Box>
     );
   }
-  console.log("data?.picture >>>", data);
+
   return (
     <>
-      {console.log(data?.jobTitleFunction)}
       <div className="container mt-5">
         <div className="add">
           <center>{id ? <h1>update lead</h1> : <h1>Submit leads</h1>}</center>
@@ -250,13 +256,11 @@ const LeadForm = () => {
               />
             </Grid>
             <Grid item sm={6}>
-              <TextField
-                label="Mobile no"
-                variant="outlined"
-                name="fixedPhone"
-                value={data?.fixedPhone || ""}
-                onChange={handleChange}
-                fullWidth
+              <PhoneInput
+                defaultCountry="IN"
+                placeholder="Enter phone number"
+                value={data?.fixedPhone || "null"}
+                onChange={() => handleChange}
               />
             </Grid>
             <Grid item sm={6}>
@@ -421,6 +425,7 @@ const LeadForm = () => {
               </Button>
             </Grid>
           </Grid>
+          {success ? <FlashMessage /> : ""}
         </div>
       </div>
     </>
