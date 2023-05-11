@@ -8,8 +8,8 @@ import { Autocomplete, CircularProgress, Grid } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDebounce } from "app/services/hooks";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
-import MuiPhoneNumber from "material-ui-phone-number";
-import { isValidPhoneNumber } from "libphonenumber-js";
+
+import MuiPhonenumber from "app/services/mui-phone";
 
 import FlashMessage from "../../services/flash-message";
 
@@ -23,7 +23,6 @@ const Contactform = () => {
   const [error, setError] = useState({});
   const [SearchJobTitle, setSearchJobTitle] = useState([]);
   const [address, setSearchAddress] = useState([]);
-  const [isValid, setIsValid] = useState(false);
 
   const [data, setData] = useState({
     firstName: "",
@@ -131,9 +130,6 @@ const Contactform = () => {
     if (!data.name) {
       errors.name = "name is required";
     }
-    if (!isValid) {
-      errors.fixedPhone = "invalid";
-    }
 
     return errors;
   };
@@ -167,8 +163,6 @@ const Contactform = () => {
     );
   }
 
-  const fixedPhone = data?.fixedPhone?.split(".").join(" ").replaceAll(" ", "");
-
   return (
     <>
       <center>{id ? <h1>update Contact</h1> : <h1>add Contact</h1>}</center>
@@ -179,23 +173,7 @@ const Contactform = () => {
         style={{ width: "50%", margin: "0 auto" }}
       >
         <Grid item sm={6}>
-          <MuiPhoneNumber
-            label="Fixedphone"
-            variant="outlined"
-            defaultCountry={"in"}
-            value={data?.fixedPhone || ""}
-            onChange={(value) => {
-              setIsValid(isValidPhoneNumber(value));
-              console.log(isValid);
-              return setData({
-                ...data,
-                fixedPhone: value,
-              });
-            }}
-            error={error?.fixedPhone ? true : false}
-            helperText={error?.fixedPhone ? `${error.fixedPhone}` : ""}
-            fullWidth
-          />
+          <MuiPhonenumber />
         </Grid>
         <Grid item sm={6}>
           <Autocomplete

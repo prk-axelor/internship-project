@@ -11,8 +11,8 @@ import { Autocomplete, Grid } from "@mui/material";
 import { useDebounce } from "app/services/hooks";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import FlashMessage from "app/services/flash-message";
-import MuiPhoneNumber from "material-ui-phone-number";
-import { isValidPhoneNumber } from "libphonenumber-js";
+import Muimobileno from "app/services/mui-mobile";
+import MuiPhonenumber from "app/services/mui-phone";
 
 const CustomerForm = () => {
   const { id } = useParams();
@@ -34,7 +34,7 @@ const CustomerForm = () => {
     team: "",
     isCustomer: true,
   });
-  const [isValid, setIsValid] = useState(false);
+
   const [saving, setSaving] = useState(false);
   const [picture, setPicture] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -45,7 +45,6 @@ const CustomerForm = () => {
   const [team, setTeam] = useState([]);
   const [language, setLanguage] = useState([]);
   const [success, setSucces] = useState(false);
-  const [isValidPhone, setIsValidPhone] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -177,16 +176,10 @@ const CustomerForm = () => {
     if (!customer.name) {
       error.name = "name is required";
     }
-    if (!isValid) {
-      error.fixedPhone = "invalid";
-    }
-    if (!isValidPhone) {
-      error.mobilePhone = "invalid";
-    }
+
     return error;
   };
-  console.log("error", error.mobilePhone);
-  console.log("err", error.fixedPhone);
+
   useEffect(() => {
     if (id) {
       setLoading(true);
@@ -279,42 +272,10 @@ const CustomerForm = () => {
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <MuiPhoneNumber
-            label="Fixedphone"
-            variant="outlined"
-            defaultCountry={"in"}
-            value={customer?.fixedPhone || ""}
-            onChange={(value) => {
-              setIsValid(isValidPhoneNumber(value));
-              console.log(isValid);
-              return setCustomer({
-                ...customer,
-                fixedPhone: value,
-              });
-            }}
-            error={error?.fixedPhone ? true : false}
-            helperText={error?.fixedPhone ? `${error.fixedPhone}` : ""}
-            fullWidth
-          />
+          <Muimobileno />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <MuiPhoneNumber
-            label="Mobilephone"
-            variant="outlined"
-            defaultCountry={"in"}
-            value={customer?.mobilePhone || ""}
-            onChange={(value) => {
-              setIsValidPhone(isValidPhoneNumber(value));
-
-              return setCustomer({
-                ...customer,
-                mobilePhone: value,
-              });
-            }}
-            error={error?.mobilePhone ? true : false}
-            helperText={error?.mobilePhone ? `${error.mobilePhone}` : ""}
-            fullWidth
-          />
+          <MuiPhonenumber />
         </Grid>
         <Grid item xs={12} sm={6}>
           <Autocomplete

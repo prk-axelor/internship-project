@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { api } from "./api";
@@ -12,8 +12,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Autocomplete } from "@mui/material";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import FlashMessage from "../../services/flash-message";
-import MuiPhoneNumber from "material-ui-phone-number";
-import { isValidPhoneNumber } from "libphonenumber-js";
+import MuiPhonenumber from "app/services/mui-phone";
 
 const LeadForm = () => {
   const { id } = useParams();
@@ -35,7 +34,7 @@ const LeadForm = () => {
     jobTitleFunction: "",
     // picture: [],
   });
-  const [isValid, setIsValid] = useState(false);
+
   const [saving, setSaving] = useState(false);
   const [picture, setPicture] = useState(null);
   const [errors, setErrors] = useState({});
@@ -170,9 +169,6 @@ const LeadForm = () => {
       errors.address = "Please enter valid email address";
     }
 
-    if (!isValid) {
-      errors.fixedPhone = "invalid";
-    }
     return errors;
   };
   useEffect(() => {
@@ -256,23 +252,7 @@ const LeadForm = () => {
               />
             </Grid>
             <Grid item sm={6}>
-              <MuiPhoneNumber
-                label="Fixedphone"
-                variant="outlined"
-                defaultCountry={"in"}
-                value={data?.fixedPhone || ""}
-                onChange={(value) => {
-                  setIsValid(isValidPhoneNumber(value));
-                  console.log(isValid);
-                  return setData({
-                    ...data,
-                    fixedPhone: value,
-                  });
-                }}
-                error={errors?.fixedPhone ? true : false}
-                helperText={errors?.fixedPhone ? `${errors.fixedPhone}` : ""}
-                fullWidth
-              />
+              <MuiPhonenumber />
             </Grid>
             <Grid item sm={6}>
               <TextField

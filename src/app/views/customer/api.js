@@ -47,6 +47,7 @@ const getCustomer = (id) => {
         "name",
         "mainAddress.fullName",
         "fixedPhone",
+        "mobilePhone",
         "emailAddress",
         "partnerCategory.name",
         "fiscalPosition.code",
