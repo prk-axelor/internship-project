@@ -8,6 +8,8 @@ import { Autocomplete, CircularProgress, Grid } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDebounce } from "app/services/hooks";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import MuiPhoneNumber from "material-ui-phone-number";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 import FlashMessage from "../../services/flash-message";
 
@@ -21,6 +23,7 @@ const Contactform = () => {
   const [error, setError] = useState({});
   const [SearchJobTitle, setSearchJobTitle] = useState([]);
   const [address, setSearchAddress] = useState([]);
+  const [isValid, setIsValid] = useState(false);
 
   const [data, setData] = useState({
     firstName: "",
@@ -128,6 +131,10 @@ const Contactform = () => {
     if (!data.name) {
       errors.name = "name is required";
     }
+    if (!isValid) {
+      errors.fixedPhone = "invalid";
+    }
+
     return errors;
   };
 
@@ -172,32 +179,26 @@ const Contactform = () => {
         style={{ width: "50%", margin: "0 auto" }}
       >
         <Grid item sm={6}>
-          <TextField
-            id="filled-basic"
-            label="First name"
+          <MuiPhoneNumber
+            label="Fixedphone"
             variant="outlined"
-            name="firstName"
-            value={data.firstName || ""}
-            onChange={handleChange}
-            fullWidth
-          />
-        </Grid>
-        <Grid item sm={6}>
-          <TextField
-            id="filled-basic"
-            label="Name"
-            variant="outlined"
-            name="name"
-            onChange={handleChange}
-            error={error?.name ? true : false}
-            helperText={error?.name ? `${error.name}` : ""}
-            value={data.name || ""}
+            defaultCountry={"in"}
+            value={data?.fixedPhone || ""}
+            onChange={(value) => {
+              setIsValid(isValidPhoneNumber(value));
+              console.log(isValid);
+              return setData({
+                ...data,
+                fixedPhone: value,
+              });
+            }}
+            error={error?.fixedPhone ? true : false}
+            helperText={error?.fixedPhone ? `${error.fixedPhone}` : ""}
             fullWidth
           />
         </Grid>
         <Grid item sm={6}>
           <Autocomplete
-            id="grouped-demo"
             options={
               SearchJobTitle?.map((a) => {
                 return {
@@ -221,8 +222,17 @@ const Contactform = () => {
           />
         </Grid>
         <Grid item sm={6}>
+          <TextField
+            label="First name"
+            variant="outlined"
+            name="firstName"
+            value={data.firstName || ""}
+            onChange={handleChange}
+            fullWidth
+          />
+        </Grid>
+        <Grid item sm={6}>
           <Autocomplete
-            id="grouped-demo"
             options={
               address?.map((a) => {
                 return {
@@ -247,20 +257,19 @@ const Contactform = () => {
 
         <Grid item sm={6}>
           <TextField
-            type="tel"
-            id="filled-basic"
-            label="Fixed phone"
-            value={fixedPhone || ""}
+            label="Name"
             variant="outlined"
-            name="fixedPhone"
+            name="name"
             onChange={handleChange}
+            error={error?.name ? true : false}
+            helperText={error?.name ? `${error.name}` : ""}
+            value={data.name || ""}
             fullWidth
           />
         </Grid>
         <Grid item sm={6}>
           <TextField
             type="tel"
-            id="filled-basic"
             label="Mobile phone"
             variant="outlined"
             name="mobilePhone"
@@ -272,7 +281,6 @@ const Contactform = () => {
 
         <Grid item sm={12}>
           <TextField
-            id="filled-basic"
             label="Email"
             name="address"
             value={data?.emailAddress?.address || ""}
@@ -284,7 +292,6 @@ const Contactform = () => {
 
         <Grid item sm={12}>
           <TextField
-            id="filled-basic"
             label="Time Slot"
             name="timeSlot"
             variant="outlined"

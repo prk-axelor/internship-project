@@ -11,6 +11,8 @@ import { Autocomplete, Grid } from "@mui/material";
 import { useDebounce } from "app/services/hooks";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import FlashMessage from "app/services/flash-message";
+import MuiPhoneNumber from "material-ui-phone-number";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 const CustomerForm = () => {
   const { id } = useParams();
@@ -32,6 +34,7 @@ const CustomerForm = () => {
     team: "",
     isCustomer: true,
   });
+  const [isValid, setIsValid] = useState(false);
   const [saving, setSaving] = useState(false);
   const [picture, setPicture] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -42,6 +45,7 @@ const CustomerForm = () => {
   const [team, setTeam] = useState([]);
   const [language, setLanguage] = useState([]);
   const [success, setSucces] = useState(false);
+  const [isValidPhone, setIsValidPhone] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -173,8 +177,16 @@ const CustomerForm = () => {
     if (!customer.name) {
       error.name = "name is required";
     }
+    if (!isValid) {
+      error.fixedPhone = "invalid";
+    }
+    if (!isValidPhone) {
+      error.mobilePhone = "invalid";
+    }
     return error;
   };
+  console.log("error", error.mobilePhone);
+  console.log("err", error.fixedPhone);
   useEffect(() => {
     if (id) {
       setLoading(true);
@@ -213,7 +225,6 @@ const CustomerForm = () => {
       <Grid container spacing={1} style={{ width: "40%", margin: "0 auto" }}>
         <Grid item xs={12} sm={6}>
           <TextField
-            id="filled-basic"
             label="Name"
             variant="outlined"
             name="name"
@@ -249,7 +260,6 @@ const CustomerForm = () => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            id="filled-basic"
             label="Website"
             name="webSite"
             value={customer.webSite || ""}
@@ -260,7 +270,6 @@ const CustomerForm = () => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            id="filled-basic"
             label="Email"
             name="address"
             value={customer?.emailAddress?.address || ""}
@@ -270,32 +279,45 @@ const CustomerForm = () => {
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField
-            type="tel"
-            id="filled-basic"
-            label="Fixed phone"
-            value={customer.fixedPhone || ""}
+          <MuiPhoneNumber
+            label="Fixedphone"
             variant="outlined"
-            name="fixedPhone"
+            defaultCountry={"in"}
+            value={customer?.fixedPhone || ""}
+            onChange={(value) => {
+              setIsValid(isValidPhoneNumber(value));
+              console.log(isValid);
+              return setCustomer({
+                ...customer,
+                fixedPhone: value,
+              });
+            }}
+            error={error?.fixedPhone ? true : false}
+            helperText={error?.fixedPhone ? `${error.fixedPhone}` : ""}
             fullWidth
-            onChange={handleChange}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField
-            type="tel"
-            id="filled-basic"
-            label="Mobile no"
+          <MuiPhoneNumber
+            label="Mobilephone"
             variant="outlined"
-            name="mobilePhone"
-            value={customer.mobilePhone || ""}
+            defaultCountry={"in"}
+            value={customer?.mobilePhone || ""}
+            onChange={(value) => {
+              setIsValidPhone(isValidPhoneNumber(value));
+
+              return setCustomer({
+                ...customer,
+                mobilePhone: value,
+              });
+            }}
+            error={error?.mobilePhone ? true : false}
+            helperText={error?.mobilePhone ? `${error.mobilePhone}` : ""}
             fullWidth
-            onChange={handleChange}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <Autocomplete
-            id="grouped-demo"
             options={category?.map((a) => {
               return {
                 name: a.name,
@@ -318,7 +340,6 @@ const CustomerForm = () => {
 
         <Grid item xs={12} sm={6}>
           <Autocomplete
-            id="grouped-demo"
             options={source}
             isOptionEqualToValue={(option, value) =>
               option.value === value.value
@@ -335,7 +356,6 @@ const CustomerForm = () => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <Autocomplete
-            id="grouped-demo"
             options={assign}
             isOptionEqualToValue={(option, value) =>
               option.value === value.value
@@ -355,7 +375,6 @@ const CustomerForm = () => {
 
         <Grid item xs={12} sm={6}>
           <Autocomplete
-            id="grouped-demo"
             options={team}
             getOptionLabel={(option) => {
               return option?.name || "";
@@ -372,7 +391,6 @@ const CustomerForm = () => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <Autocomplete
-            id="grouped-demo"
             options={language}
             getOptionLabel={(option) => {
               return option?.name || "";

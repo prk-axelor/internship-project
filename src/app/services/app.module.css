@@ -1,3 +1,7 @@
 .Table{
     aria-label:"simple table"
 }
+.phoneInput{
+    height: 40px;
+    background: #000;
+}

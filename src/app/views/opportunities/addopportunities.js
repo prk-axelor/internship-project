@@ -160,7 +160,6 @@ const Addopportunities = () => {
         <Grid container spacing={1} style={{ width: "40%", margin: "0 auto" }}>
           <Grid item xs={12} sm={6}>
             <TextField
-              id="filled-basic"
               label="Name"
               variant="outlined"
               disabled={saving}
@@ -174,7 +173,6 @@ const Addopportunities = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              id="filled-basic"
               label="Next step"
               variant="outlined"
               disabled={saving}
@@ -186,7 +184,6 @@ const Addopportunities = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              id="filled-basic"
               label="Probability(%)"
               disabled={saving}
               name="probability"
@@ -210,7 +207,6 @@ const Addopportunities = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              id="filled-basic"
               label="Best case"
               type="number"
               disabled={saving}
@@ -223,7 +219,6 @@ const Addopportunities = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              id="filled-basic"
               type="number"
               label="Worst case"
               disabled={saving}
@@ -237,7 +232,6 @@ const Addopportunities = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               type="date"
-              id="filled-basic"
               disabled={saving}
               name="expectedCloseDate"
               value={data?.expectedCloseDate || ""}
@@ -273,7 +267,6 @@ const Addopportunities = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Autocomplete
-              id="grouped-demo"
               options={source}
               getOptionLabel={(option) => option?.name || ""}
               value={data?.source || null}
@@ -288,7 +281,6 @@ const Addopportunities = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Autocomplete
-              id="grouped-demo"
               options={oppertunity}
               getOptionLabel={(option) => option?.name || ""}
               value={data?.opportunityType || null}

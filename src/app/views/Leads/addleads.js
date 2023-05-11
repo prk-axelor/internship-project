@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { api } from "./api";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDebounce } from "app/services/hooks";
 import Grid from "@mui/material/Grid";
-import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
-
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Autocomplete } from "@mui/material";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import FlashMessage from "../../services/flash-message";
+import MuiPhoneNumber from "material-ui-phone-number";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 const LeadForm = () => {
   const { id } = useParams();
@@ -35,6 +35,7 @@ const LeadForm = () => {
     jobTitleFunction: "",
     // picture: [],
   });
+  const [isValid, setIsValid] = useState(false);
   const [saving, setSaving] = useState(false);
   const [picture, setPicture] = useState(null);
   const [errors, setErrors] = useState({});
@@ -43,15 +44,14 @@ const LeadForm = () => {
   const [city, setCity] = useState([]);
   const [country, setCountry] = useState([""]);
   const [success, setSucces] = useState(false);
-  const [value, setValue] = useState();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e && e.target;
+    console.log({ e });
     setData({
       ...data,
       [name]: value,
     });
-    console.log(e.target);
 
     if (name === "picture") {
       const file = e.target.files[0];
@@ -165,11 +165,14 @@ const LeadForm = () => {
       errors.name = "Lastname is required";
     }
     if (!data.emailAddress.address) {
-      errors.address = "email is required";
+      errors.address = "Email is required";
     } else if (!regex.test(data.emailAddress.address)) {
       errors.address = "Please enter valid email address";
     }
 
+    if (!isValid) {
+      errors.fixedPhone = "invalid";
+    }
     return errors;
   };
   useEffect(() => {
@@ -215,7 +218,6 @@ const LeadForm = () => {
           >
             <Grid item sm={6}>
               <TextField
-                id="filled-basic"
                 label="First name"
                 variant="outlined"
                 name="firstName"
@@ -229,7 +231,6 @@ const LeadForm = () => {
 
             <Grid item sm={6}>
               <TextField
-                id="filled-basic"
                 label="Name"
                 height={150}
                 variant="outlined"
@@ -244,7 +245,6 @@ const LeadForm = () => {
 
             <Grid item sm={6}>
               <TextField
-                id="filled-basic"
                 label="Email"
                 name="address"
                 value={data?.emailAddress?.address || ""}
@@ -256,16 +256,26 @@ const LeadForm = () => {
               />
             </Grid>
             <Grid item sm={6}>
-              <PhoneInput
-                defaultCountry="IN"
-                placeholder="Enter phone number"
-                value={data?.fixedPhone || "null"}
-                onChange={() => handleChange}
+              <MuiPhoneNumber
+                label="Fixedphone"
+                variant="outlined"
+                defaultCountry={"in"}
+                value={data?.fixedPhone || ""}
+                onChange={(value) => {
+                  setIsValid(isValidPhoneNumber(value));
+                  console.log(isValid);
+                  return setData({
+                    ...data,
+                    fixedPhone: value,
+                  });
+                }}
+                error={errors?.fixedPhone ? true : false}
+                helperText={errors?.fixedPhone ? `${errors.fixedPhone}` : ""}
+                fullWidth
               />
             </Grid>
             <Grid item sm={6}>
               <TextField
-                id="filled-basic"
                 label="Enterprise"
                 variant="outlined"
                 name="enterpriseName"
@@ -276,7 +286,6 @@ const LeadForm = () => {
             </Grid>
             <Grid item sm={6}>
               <TextField
-                id="filled-basic"
                 label="Website"
                 name="webSite"
                 value={data?.webSite || ""}
@@ -288,7 +297,6 @@ const LeadForm = () => {
             <Grid item sm={12}>
               <TextField
                 fullWidth
-                id="filled-basic"
                 label="Address"
                 name="primaryAddress"
                 value={data?.primaryAddress || ""}
@@ -299,7 +307,6 @@ const LeadForm = () => {
 
             <Grid item sm={6}>
               <Autocomplete
-                id="grouped-demo"
                 options={city}
                 getOptionLabel={(option) => option?.fullName || ""}
                 value={data?.primaryCity || null}
@@ -317,7 +324,6 @@ const LeadForm = () => {
                 <TextField disabled value={data?.primaryCountry || ""} />
               ) : (
                 <Autocomplete
-                  id="grouped-demo"
                   options={country.map((a) => {
                     return {
                       name: a.name || "",
@@ -347,7 +353,6 @@ const LeadForm = () => {
 
             <Grid item sm={6}>
               <Autocomplete
-                id="grouped-demo"
                 options={jobDesc}
                 getOptionLabel={(option) => option?.name || ""}
                 value={data?.jobTitleFunction || null}
