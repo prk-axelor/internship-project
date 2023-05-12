@@ -252,7 +252,12 @@ const LeadForm = () => {
               />
             </Grid>
             <Grid item sm={6}>
-              <MuiPhonenumber />
+              <MuiPhonenumber
+                customer={data}
+                setCustomer={setData}
+                field="fixedPhone"
+                label="Fixed Phone"
+              />
             </Grid>
             <Grid item sm={6}>
               <TextField

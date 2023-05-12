@@ -8,7 +8,6 @@ import { Autocomplete, CircularProgress, Grid } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDebounce } from "app/services/hooks";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
-
 import MuiPhonenumber from "app/services/mui-phone";
 
 import FlashMessage from "../../services/flash-message";
@@ -173,7 +172,12 @@ const Contactform = () => {
         style={{ width: "50%", margin: "0 auto" }}
       >
         <Grid item sm={6}>
-          <MuiPhonenumber />
+          <MuiPhonenumber
+            customer={data}
+            setCustomer={setData}
+            label="Fixed Phone"
+            field="fixedPhone"
+          />
         </Grid>
         <Grid item sm={6}>
           <Autocomplete

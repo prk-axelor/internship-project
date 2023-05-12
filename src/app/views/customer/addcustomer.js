@@ -11,7 +11,6 @@ import { Autocomplete, Grid } from "@mui/material";
 import { useDebounce } from "app/services/hooks";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import FlashMessage from "app/services/flash-message";
-import Muimobileno from "app/services/mui-mobile";
 import MuiPhonenumber from "app/services/mui-phone";
 
 const CustomerForm = () => {
@@ -212,6 +211,7 @@ const CustomerForm = () => {
       </Box>
     );
   }
+
   return (
     <div>
       <center>{id ? <h1> update Customer</h1> : <h1>add Customer</h1>}</center>
@@ -272,10 +272,20 @@ const CustomerForm = () => {
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <Muimobileno />
+          <MuiPhonenumber
+            label="Fixed Phone"
+            customer={customer}
+            setCustomer={setCustomer}
+            field="fixedPhone"
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <MuiPhonenumber />
+          <MuiPhonenumber
+            label="Mobile Num"
+            customer={customer}
+            setCustomer={setCustomer}
+            field="mobilePhone"
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
           <Autocomplete
