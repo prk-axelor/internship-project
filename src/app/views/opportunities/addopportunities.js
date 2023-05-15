@@ -10,7 +10,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "./api";
 import { useDebounce } from "app/services/hooks";
-import FlashMessage from "app/services/flash-message";
+import FlashMessage from "app/components/flash-message";
 
 const Addopportunities = () => {
   const { id } = useParams();

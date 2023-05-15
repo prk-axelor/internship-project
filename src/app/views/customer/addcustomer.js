@@ -10,13 +10,20 @@ import { useState, useEffect } from "react";
 import { Autocomplete, Grid } from "@mui/material";
 import { useDebounce } from "app/services/hooks";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
-import FlashMessage from "app/services/flash-message";
-import MuiPhonenumber from "app/services/mui-phone";
+import FlashMessage from "app/components/flash-message";
+import MuiPhonenumber from "app/components/mui-phone";
+import { rest } from "../../services/rest";
 
 const CustomerForm = () => {
   const { id } = useParams();
-  const { fetchCategory, fetchSource, fetchAssign, fetchTeam, fetchLanguage } =
-    api;
+  const {
+    fetchCategory,
+    fetchSource,
+    fetchAssign,
+    fetchTeam,
+    fetchLanguage,
+    imageUploader,
+  } = api;
   const navigate = useNavigate();
 
   const [customer, setCustomer] = useState({
@@ -48,23 +55,33 @@ const CustomerForm = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCustomer({ ...customer, [name]: value });
-    if (name === "image") {
-      const file = e.target.files[0];
-      setPicture(file);
-      const fileReader = new FileReader();
-      fileReader.onload = function (e) {
-        setPicture(e.target.result);
-      };
-      fileReader.readAsDataURL(file);
-    }
+
     if (name === "address") {
       setCustomer((prevData) => {
         const newData = { ...prevData };
-        newData.emailAddress[name] = value;
+        setCustomer({
+          ...customer,
+          emailAddress: {
+            address: value,
+          },
+        });
         return newData;
       });
     }
   };
+  const handleUpload = async (e) => {
+    const file = e.target.files[0];
+
+    const res = await imageUploader(file);
+    setCustomer({ ...customer, picture: res });
+    // save it on your form data state
+    const fileReader = new FileReader();
+    fileReader.onload = function (e) {
+      setPicture(file);
+    };
+    fileReader.readAsDataURL(res);
+  };
+  console.log("formData", picture);
 
   const handleSubmit = async (e) => {
     let newdata = {
@@ -79,7 +96,7 @@ const CustomerForm = () => {
         await api.updateCustomer(id, newdata);
         setSucces(true);
         setSaving(false);
-        navigate("../new");
+        navigate("/customer");
       } else {
         const response = await api.addCustomer(newdata);
         setSaving(false);
@@ -129,17 +146,19 @@ const CustomerForm = () => {
     const response = await fetchAssign(value);
     setAssign(response?.data?.data);
   };
+
   const debouncedAssignChangeSearch = useDebounce(handleAssignChangeSearch);
   const handleAssignChange = (e, value) => {
     setCustomer({
       ...customer,
       user: {
-        id: value?.id,
-        fullName: value?.fullName,
-        code: value?.code,
+        id: value?.id || "",
+        fullName: value?.fullName || "",
+        code: value?.code || "",
       },
     });
   };
+
   const handleTeamChangeSearch = async (e, value) => {
     const response = await fetchTeam(value);
     setTeam(response?.data?.data);
@@ -156,8 +175,10 @@ const CustomerForm = () => {
     });
   };
   const handleLanguageInputChange = async (e, value) => {
-    const response = await fetchTeam(value);
-    setAssign(response?.data?.data);
+    // console.log("e value >>>", { e, value });
+    const response = await fetchLanguage(value);
+    // console.log("response >>>", response);
+    setLanguage(response?.data?.data);
   };
   const debouncedLanguageChangeSearch = useDebounce(handleLanguageInputChange);
   const handleLanguageChange = (e, value) => {
@@ -212,6 +233,19 @@ const CustomerForm = () => {
     );
   }
 
+  // console.log(
+  //   (async () => {
+  //     await console.log(assign);
+  //   })()
+  // );
+
+  // console.log("options >>>", {
+  //   category,
+  //   source,
+  //   assign,
+  //   team,
+  //   language,
+  // });
   return (
     <div>
       <center>{id ? <h1> update Customer</h1> : <h1>add Customer</h1>}</center>
@@ -221,7 +255,7 @@ const CustomerForm = () => {
             label="Name"
             variant="outlined"
             name="name"
-            value={customer.name || ""}
+            value={customer?.name || ""}
             onChange={handleChange}
             error={error.name ? true : false}
             helperText={error.name ? `${error.name}` : ""}
@@ -234,7 +268,7 @@ const CustomerForm = () => {
             label="Turnover"
             type="number"
             name="saleTurnover"
-            value={customer.saleTurnover || ""}
+            value={customer?.saleTurnover || ""}
             onChange={handleChange}
             variant="outlined"
             fullWidth
@@ -245,7 +279,7 @@ const CustomerForm = () => {
             label="Employee(Nbr)"
             name="nbrEmployees"
             type="number"
-            value={customer.nbrEmployees || ""}
+            value={customer?.nbrEmployees || ""}
             onChange={handleChange}
             variant="outlined"
             fullWidth
@@ -255,7 +289,7 @@ const CustomerForm = () => {
           <TextField
             label="Website"
             name="webSite"
-            value={customer.webSite || ""}
+            value={customer?.webSite || ""}
             onChange={handleChange}
             variant="outlined"
             fullWidth
@@ -281,7 +315,7 @@ const CustomerForm = () => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <MuiPhonenumber
-            label="Mobile Num"
+            label="Mobile Phone"
             customer={customer}
             setCustomer={setCustomer}
             field="mobilePhone"
@@ -289,12 +323,14 @@ const CustomerForm = () => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <Autocomplete
-            options={category?.map((a) => {
-              return {
-                name: a.name,
-                id: a.id,
-              };
-            })}
+            options={
+              category?.map((a) => {
+                return {
+                  name: a?.name,
+                  id: a?.id,
+                };
+              }) || []
+            }
             getOptionLabel={(option) => option?.name || ""}
             value={customer?.partnerCategory || null}
             fullWidth
@@ -327,7 +363,15 @@ const CustomerForm = () => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <Autocomplete
-            options={assign}
+            options={
+              assign?.map((a) => {
+                return {
+                  fullName: a?.fullName || "",
+                  id: a?.id || "",
+                  code: a?.code || "",
+                };
+              }) || []
+            }
             isOptionEqualToValue={(option, value) =>
               option.value === value.value
             }
@@ -362,7 +406,7 @@ const CustomerForm = () => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <Autocomplete
-            options={language}
+            options={language || []}
             getOptionLabel={(option) => {
               return option?.name || "";
             }}
@@ -378,11 +422,7 @@ const CustomerForm = () => {
         </Grid>
 
         <Grid item sm={6} height={150}>
-          <Button variant="contained" component="label" sx={{ mr: 1 }}>
-            <FileUploadIcon />
-            Upload File
-            <input type="file" hidden name="image" onChange={handleChange} />
-          </Button>
+          <input type="file" name="image" onClick={handleUpload} />
           {picture && (
             <Button
               onClick={handleDelete}

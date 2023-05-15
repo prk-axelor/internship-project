@@ -97,21 +97,36 @@ const fecthAction = async (id, name) => {
   }
 };
 
-const imageUploader = (file) => {
-  console.log(file);
-  const param = {
-    file: file,
-    request: {
+const imageUploader = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("field", undefined);
+  formData.append(
+    "request",
+    JSON.stringify({
       data: {
-        fileName: file.name,
-        fileType: file.type,
-        fileSize: file.size,
-
-        $upload: { file: {} },
+        fileName: file?.name,
+        fileType: file?.type,
+        fileSize: file?.size,
+        id: file?.id,
+        version: file?.version,
+        $upload: { file: { file } },
       },
-    },
-  };
-  return rest.post("/ws/rest/com.axelor.meta.db.MetaFile/upload", param);
+    })
+  );
+  console.log("formData", formData);
+
+  const res = await rest.post(
+    "/ws/rest/com.axelor.meta.db.MetaFile/upload",
+    formData,
+    {
+      headers: {
+        "Content-Type": 'multipart/form-data;  boundary="another cool boundary',
+      },
+    }
+  );
+  console.log({ res });
+  return res.data.data[0];
 };
 // const imageUploader = () => {
 //   return rest.post("/ws/rest/com.axelor.meta.db.MetaFile/upload", {});

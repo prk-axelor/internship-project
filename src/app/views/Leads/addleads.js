@@ -11,8 +11,8 @@ import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Autocomplete } from "@mui/material";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
-import FlashMessage from "../../services/flash-message";
-import MuiPhonenumber from "app/services/mui-phone";
+import FlashMessage from "../../components/flash-message";
+import MuiPhonenumber from "app/components/mui-phone";
 
 const LeadForm = () => {
   const { id } = useParams();
@@ -42,7 +42,7 @@ const LeadForm = () => {
   const [jobDesc, setJobDesc] = useState([]);
   const [city, setCity] = useState([]);
   const [country, setCountry] = useState([""]);
-  const [success, setSucces] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e && e.target;
@@ -62,10 +62,11 @@ const LeadForm = () => {
       fileReader.readAsDataURL(file);
     }
     if (name === "address") {
-      setData((prevData) => {
-        const newData = { ...prevData };
-        newData.emailAddress[name] = value;
-        return newData;
+      setData({
+        ...data,
+        emailAddress: {
+          address: value,
+        },
       });
     }
   };
@@ -75,15 +76,17 @@ const LeadForm = () => {
 
   const handleJobInputchange = async (e, value) => {
     const response = await fetchJob(value);
+
     setJobDesc(response?.data?.data);
   };
+
   const debouncedChangeSearch = useDebounce(handleJobInputchange);
   const handleJobChange = (e, value) => {
     setData({
       ...data,
       jobTitleFunction: {
-        id: value.id,
-        name: value.name,
+        id: value?.id || "",
+        name: value?.name || "",
       },
     });
   };
@@ -92,35 +95,35 @@ const LeadForm = () => {
     setData({
       ...data,
       primaryCountry: {
-        id: value?.id,
-        name: value?.name,
+        id: value?.id || "",
+        name: value?.name || "",
+        $version: value?.version || "",
       },
     });
   };
   const handleCityChange = async (e, value) => {
-    setData({
-      ...data,
-      primaryCity: {
-        id: value?.id,
-        fullName: value?.fullName,
-      },
-      primaryCountry: value?.country,
-    });
-
     const response = await api.fecthAction(value?.id, value?.fullName);
     if (response && response.data.status === 0) {
       const Country = await response?.data?.data[0]?.attrs?.primaryCountry
-        ?.value?.name;
+        ?.value;
 
       const PostalCode = await response?.data?.data[0]?.attrs?.primaryPostalCode
         ?.value;
       setData({
         ...data,
-        primaryCity: {
-          id: value?.id,
-          fullName: value?.fullName,
-        },
-        primaryCountry: Country,
+        primaryCity: value
+          ? {
+              id: value?.id,
+              fullName: value?.fullName,
+            }
+          : "",
+        primaryCountry: value
+          ? {
+              name: Country?.name,
+              id: Country?.id,
+              $version: Country?.$version,
+            }
+          : "",
         primaryPostalCode: PostalCode,
       });
     }
@@ -138,12 +141,9 @@ const LeadForm = () => {
 
     if (Object.keys(errors)?.length === 0) {
       if (id) {
-        await api.updateLeads(id, newdata).then((res) => {
-          setSaving(false);
-          setSucces(true);
-        });
-
-        navigate("../new");
+        await api.updateLeads(id, newdata);
+        setSaving(false);
+        navigate("/leads");
       } else {
         const response = await api.addLead(newdata);
 
@@ -183,6 +183,14 @@ const LeadForm = () => {
     fetchOptions(fetchCountry, setCountry);
   }, [fetchJob, fetchCity, fetchCountry]);
 
+  const countryOps = country?.map((a) => {
+    return {
+      name: a?.name || "",
+      $version: a?.version || "",
+      id: a?.id || "",
+    };
+  });
+
   useEffect(() => {
     if (id) {
       setLoading(true);
@@ -200,6 +208,8 @@ const LeadForm = () => {
       </Box>
     );
   }
+
+  console.log(data);
 
   return (
     <>
@@ -306,26 +316,30 @@ const LeadForm = () => {
 
             <Grid item sm={6}>
               {data?.primaryCity ? (
-                <TextField disabled value={data?.primaryCountry || ""} />
+                <>
+                  <TextField
+                    disabled
+                    value={data?.primaryCountry?.name || ""}
+                    fullWidth
+                  />
+                </>
               ) : (
-                <Autocomplete
-                  options={country.map((a) => {
-                    return {
-                      name: a.name || "",
-                    };
-                  })}
-                  getOptionLabel={(option) => {
-                    return option.name;
-                  }}
-                  isOptionEqualToValue={(option, value) =>
-                    option.name === value.name
-                  }
-                  fullWidth
-                  onChange={handleCountryChange}
-                  renderInput={(params) => (
-                    <TextField {...params} label="country" />
-                  )}
-                />
+                <>
+                  <Autocomplete
+                    options={countryOps}
+                    getOptionLabel={(option) => {
+                      return option.name || "";
+                    }}
+                    isOptionEqualToValue={(option, value) =>
+                      option.value === value.value || ""
+                    }
+                    fullWidth
+                    onChange={handleCountryChange}
+                    renderInput={(params) => (
+                      <TextField {...params} label="country" />
+                    )}
+                  />
+                </>
               )}
             </Grid>
             <Grid item sm={6}>
@@ -338,12 +352,19 @@ const LeadForm = () => {
 
             <Grid item sm={6}>
               <Autocomplete
-                options={jobDesc}
+                options={
+                  jobDesc?.map((a) => {
+                    return {
+                      name: a?.name || "",
+                      id: a?.id || "",
+                    };
+                  }) || []
+                }
                 getOptionLabel={(option) => option?.name || ""}
                 value={data?.jobTitleFunction || null}
                 fullWidth
                 isOptionEqualToValue={(option, value) => {
-                  return option.name === value.name;
+                  return option?.value === value?.value;
                 }}
                 renderInput={(params) => (
                   <TextField {...params} label="search" />
@@ -376,6 +397,7 @@ const LeadForm = () => {
                 </Button>
               )}
             </Grid>
+
             <Grid item sm={6}>
               {picture && (
                 <img src={picture} alt="author" width={100} height={100} />

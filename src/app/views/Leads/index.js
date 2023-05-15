@@ -16,7 +16,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import Pagination from "@mui/material/Pagination";
+import PaginationIndex from "app/components/pagination";
 import TextField from "@mui/material/TextField";
 import { Add, Delete, Search } from "@mui/icons-material";
 import { Container } from "@mui/system";
@@ -58,7 +58,7 @@ export function LeadList() {
         data: {
           criteria: [
             {
-              fieldName: "firstName",
+              fieldName: "name",
               operator: "like",
               value,
             },
@@ -220,15 +220,14 @@ export function LeadList() {
                   </TableBody>
                 </Table>
               </TableContainer>
+              <PaginationIndex
+                page={page}
+                setPage={setPage}
+                total={total}
+                limit={LIMIT}
+              />
             </>
           )}
-
-          <Pagination
-            count={Math.ceil(total / LIMIT)}
-            page={page}
-            onChange={(event, newpage) => setPage(newpage)}
-            color="secondary"
-          />
         </>
       ) : (
         <center>no data found</center>

@@ -6,7 +6,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Pagination,
   Table,
   TableBody,
   TableCell,
@@ -23,6 +22,7 @@ import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Add, Delete, Search } from "@mui/icons-material";
 import { Container } from "@mui/system";
+import PaginationIndex from "app/components/pagination";
 const LIMIT = 5;
 const ContactList = () => {
   const [data, setData] = useState([]);
@@ -164,7 +164,12 @@ const ContactList = () => {
             </Container>
           ) : (
             <>
-              <TableContainer style={{ padding: "15px", height: "50vh" }}>
+              <TableContainer
+                style={{
+                  padding: "15px",
+                  //  height: "50vh"
+                }}
+              >
                 <Table aria-label="simple table">
                   <TableHead>
                     <TableRow>
@@ -216,11 +221,11 @@ const ContactList = () => {
               </TableContainer>
             </>
           )}
-          <Pagination
-            count={Math.ceil(total / LIMIT)}
+          <PaginationIndex
             page={page}
-            onChange={(event, newpage) => setPage(newpage)}
-            color="secondary"
+            setPage={setPage}
+            total={total}
+            limit={LIMIT}
           />
         </>
       ) : (

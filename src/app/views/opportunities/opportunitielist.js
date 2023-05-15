@@ -19,11 +19,11 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Pagination,
   TextField,
 } from "@mui/material";
-import { Add, Delete, Search } from "@mui/icons-material";
+import { Add, Search } from "@mui/icons-material";
 import { Container } from "@mui/system";
+import PaginationIndex from "app/components/pagination";
 const LIMIT = 5;
 const Opportunitielist = () => {
   const [data, setData] = useState([]);
@@ -218,11 +218,11 @@ const Opportunitielist = () => {
             </>
           )}
 
-          <Pagination
-            count={Math.ceil(total / LIMIT)}
+          <PaginationIndex
             page={page}
-            onChange={(event, newpage) => setPage(newpage)}
-            color="secondary"
+            setPage={setPage}
+            total={total}
+            limit={LIMIT}
           />
         </>
       ) : (

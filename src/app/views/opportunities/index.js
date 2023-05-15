@@ -14,8 +14,9 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "./api";
 import ListIcon from "@mui/icons-material/List";
-import Pagination from "@mui/material/Pagination";
+
 import { Add, Search } from "@mui/icons-material";
+import PaginationIndex from "app/components/pagination";
 
 const LIMIT = 6;
 export function Opportunities() {
@@ -164,7 +165,7 @@ export function Opportunities() {
                     <Grid item xs={4} sm={4} md={6} key={d.id}>
                       <Grid item padding={2}>
                         <Card
-                          sx={{ height: 185 }}
+                          // sx={{ height: 185 }}
                           onClick={() => navigate(`${d.id}`)}
                         >
                           <CardActionArea>
@@ -206,11 +207,11 @@ export function Opportunities() {
               </Grid>
             </>
           )}
-          <Pagination
-            count={Math.ceil(total / LIMIT)}
+          <PaginationIndex
             page={page}
-            onChange={(event, newpage) => setPage(newpage)}
-            color="secondary"
+            setPage={setPage}
+            total={total}
+            limit={LIMIT}
           />
         </>
       ) : (

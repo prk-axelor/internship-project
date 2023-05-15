@@ -8,9 +8,9 @@ import { Autocomplete, CircularProgress, Grid } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDebounce } from "app/services/hooks";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
-import MuiPhonenumber from "app/services/mui-phone";
+import MuiPhonenumber from "app/components/mui-phone";
 
-import FlashMessage from "../../services/flash-message";
+import FlashMessage from "../../components/flash-message";
 
 const Contactform = () => {
   const { fetchJob, fetchAddress } = api;
@@ -48,21 +48,32 @@ const Contactform = () => {
     if (name === "address") {
       setData((prevData) => {
         const newData = { ...prevData };
-        newData.emailAddress[name] = value;
+        setData({
+          ...data,
+          emailAddress: {
+            address: value,
+          },
+        });
         return newData;
       });
     }
   };
-  const handleUpload = (e) => {
+  const handleUpload = async (e) => {
     const file = e.target.files[0];
 
-    api.imageUploader(file);
+    const res = await api.imageUploader(file);
+    setData({ ...data, picture: res });
+    // save it on your form data state
     const fileReader = new FileReader();
     fileReader.onload = function (e) {
-      setPicture(e.target.result);
+      console.log("e", e);
+      setPicture(e.target.file);
     };
-    fileReader.readAsDataURL(file);
+    fileReader.readAsDataURL(res);
   };
+
+  console.log({ data });
+
   const handleDelete = () => {
     setPicture(null);
   };
@@ -123,6 +134,7 @@ const Contactform = () => {
       },
     });
   };
+  console.log(data.mainAddress);
 
   const validate = (data) => {
     const errors = {};
@@ -184,9 +196,9 @@ const Contactform = () => {
             options={
               SearchJobTitle?.map((a) => {
                 return {
-                  name: a.name,
-                  id: a.id,
-                  code: a.code,
+                  name: a?.name,
+                  id: a?.id,
+                  code: a?.code,
                 };
               }) || []
             }
@@ -214,26 +226,13 @@ const Contactform = () => {
           />
         </Grid>
         <Grid item sm={6}>
-          <Autocomplete
-            options={
-              address?.map((a) => {
-                return {
-                  id: a?.id,
-                  fullName: a?.fullName,
-                };
-              }) || []
-            }
-            value={data?.mainAddress || null}
+          <TextField
+            label="Time Slot"
+            name="timeSlot"
+            variant="outlined"
+            value={data?.timeSlot || ""}
+            onChange={handleChange}
             fullWidth
-            getOptionLabel={(option) => {
-              return (option.id && `${option?.fullName}-${option?.id}`) || "";
-            }}
-            isOptionEqualToValue={(option, value) => {
-              return option?.value === value?.value;
-            }}
-            onInputChange={debouncedaddressChange}
-            renderInput={(params) => <TextField {...params} label="address" />}
-            onChange={handleAddressChange}
           />
         </Grid>
 
@@ -273,13 +272,26 @@ const Contactform = () => {
         </Grid>
 
         <Grid item sm={12}>
-          <TextField
-            label="Time Slot"
-            name="timeSlot"
-            variant="outlined"
-            value={data?.timeSlot || ""}
-            onChange={handleChange}
+          <Autocomplete
+            options={
+              address?.map((a) => {
+                return {
+                  id: a?.id,
+                  fullName: a?.fullName,
+                };
+              }) || []
+            }
+            value={data?.mainAddress || null}
             fullWidth
+            getOptionLabel={(option) => {
+              return (option.id && `${option?.fullName}-${option?.id}`) || "";
+            }}
+            isOptionEqualToValue={(option, value) => {
+              return option?.value === value?.value;
+            }}
+            onInputChange={debouncedaddressChange}
+            renderInput={(params) => <TextField {...params} label="address" />}
+            onChange={handleAddressChange}
           />
         </Grid>
 
@@ -287,7 +299,7 @@ const Contactform = () => {
           <Button variant="contained" component="label" sx={{ mr: 1 }}>
             <FileUploadIcon />
             Upload File
-            <input type="file" hidden name="image" onChange={handleUpload} />
+            <input type="file" hidden name="picture" onChange={handleUpload} />
           </Button>
           {picture && (
             <Button

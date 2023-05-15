@@ -54,6 +54,14 @@ const getCustomer = (id) => {
         "registrationCode",
         "companyStr",
         "registrationCode",
+        "saleTurnover",
+        "nbrEmployees",
+        "webSite",
+        "partnerCategory",
+        "source",
+        "user",
+        "team",
+        "language",
       ],
       related: {
         emailAddress: ["address"],
@@ -83,25 +91,74 @@ const fetchCategory = () => {
     }
   );
 };
-const fetchSource = () => {
+const fetchSource = (value) => {
   return rest.post("/ws/rest/com.axelor.apps.base.db.Source/search", {
+    data: { name: value },
     fields: ["id", "name", "code"],
   });
 };
-const fetchAssign = () => {
-  return rest.post("/ws/rest/com.axelor.auth.db.User/search", {
+const fetchAssign = async (value) => {
+  const res = await rest.post("/ws/rest/com.axelor.auth.db.User/search", {
+    data: {
+      fullName: value,
+    },
+
     fields: ["id", "fullName", "partner", "name", "code"],
   });
+
+  return res || [];
 };
-const fetchTeam = () => {
-  return rest.post("/ws/rest/com.axelor.team.db.Team/search", {
+const fetchTeam = async (value) => {
+  const res = await rest.post("/ws/rest/com.axelor.team.db.Team/search", {
+    data: {
+      name: value,
+    },
     fields: ["id", "name", "code"],
   });
+  return res || [];
 };
-const fetchLanguage = () => {
-  return rest.post("/ws/rest/com.axelor.apps.base.db.Language/search", {
-    fields: ["id", "name", "code"],
-  });
+const fetchLanguage = async (value) => {
+  const res = await rest.post(
+    "/ws/rest/com.axelor.apps.base.db.Language/search",
+    {
+      data: {
+        name: value,
+      },
+      fields: ["id", "name", "code"],
+    }
+  );
+  return res || [];
+};
+const imageUploader = async (file) => {
+  console.log("file:", file);
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("field", undefined);
+  formData.append(
+    "request",
+    JSON.stringify({
+      data: {
+        fileName: file?.name,
+        fileType: file?.type,
+        fileSize: file?.size,
+        id: file?.id,
+        version: file?.version,
+        $upload: { file: {} },
+      },
+    })
+  );
+
+  const res = await rest.post(
+    "/ws/rest/com.axelor.meta.db.MetaFile/upload",
+    formData,
+    {
+      headers: {
+        "Content-Type": 'multipart/form-data;  boundary="another cool boundary',
+      },
+    }
+  );
+  console.log({ res });
+  return res;
 };
 const api = {
   getCustomers,
@@ -115,6 +172,7 @@ const api = {
   fetchAssign,
   fetchTeam,
   fetchLanguage,
+  imageUploader,
 };
 
 export { api };

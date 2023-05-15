@@ -21,11 +21,11 @@ const MuiPhonenumber = ({ customer, setCustomer, field, label }) => {
         }}
         error={!isValid ? true : false}
         helperText={
-          customer[field].length < 3
+          customer[field]?.length < 3
             ? ""
-            : customer[field].length - 1 <= 7
+            : customer[field]?.length - 1 <= 7
             ? "Too Short"
-            : customer[field].length >= 8 && !isValid
+            : customer[field]?.length >= 8 && !isValid
             ? "Invalid Phone"
             : ""
         }

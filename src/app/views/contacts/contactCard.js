@@ -3,13 +3,13 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "./api";
 import { Button, CircularProgress, Container, Grid } from "@mui/material";
 import Card from "@mui/material/Card";
-import Pagination from "@mui/material/Pagination";
 import CardContent from "@mui/material/CardContent";
 import { CardActionArea } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import ListIcon from "@mui/icons-material/List";
 import { Add, Search } from "@mui/icons-material";
+import PaginationIndex from "app/components/pagination";
 
 const LIMIT = 6;
 
@@ -25,7 +25,7 @@ export function ContactsCard() {
 
   useEffect(() => {
     setLoading(true);
-    const data = api
+    api
       .searchContacts({
         limit: LIMIT,
         offset: (page - 1) * LIMIT,
@@ -151,7 +151,7 @@ export function ContactsCard() {
                     <Grid item xs={4} sm={4} md={6} key={d.id}>
                       <Grid item padding={2}>
                         <Card
-                          sx={{ height: 185 }}
+                          // sx={{ height: 185 }}
                           onClick={() => navigate(`${d.id}`)}
                         >
                           <CardActionArea>
@@ -202,11 +202,11 @@ export function ContactsCard() {
             </>
           )}
 
-          <Pagination
-            count={Math.ceil(total / LIMIT)}
+          <PaginationIndex
             page={page}
-            onChange={(event, newpage) => setPage(newpage)}
-            color="secondary"
+            setPage={setPage}
+            total={total}
+            limit={LIMIT}
           />
         </>
       ) : (

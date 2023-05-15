@@ -45,13 +45,15 @@ const getLead = (id) => {
         "contactDate",
         "name",
         "fixedPhone",
-        "updatedOn",
-        "createdOn",
         "enterpriseName",
         "user",
         "jobTitleFunction",
         "primaryPostalCode",
         "picture",
+        "webSite",
+        "primaryAddress",
+        "primaryCity",
+        "primaryCountry",
       ],
       related: {
         emailAddress: ["address"],
@@ -77,10 +79,16 @@ const fetchCity = () => {
     fields: ["id", "fullName", "name", "zip"],
   });
 };
-const fetchCountry = () => {
-  return rest.post("/ws/rest/com.axelor.apps.base.db.Country/search", {
-    fields: ["id", "name"],
-  });
+const fetchCountry = async () => {
+  const response = await rest.post(
+    "/ws/rest/com.axelor.apps.base.db.Country/search",
+    {
+      fields: ["id", "name"],
+    }
+  );
+  if (response && response?.data?.status === 0) {
+    return response;
+  }
 };
 
 const fecthAction = async (id, fullName) => {
@@ -98,7 +106,7 @@ const fecthAction = async (id, fullName) => {
       },
     });
 
-    if (response && response.data.status !== -1) {
+    if (response && response.data.status === 0) {
       return response;
     }
   } catch (error) {
