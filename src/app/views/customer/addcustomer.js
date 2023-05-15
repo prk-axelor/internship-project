@@ -50,7 +50,7 @@ const CustomerForm = () => {
   const [source, setSource] = useState([]);
   const [team, setTeam] = useState([]);
   const [language, setLanguage] = useState([]);
-  const [success, setSucces] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -94,9 +94,11 @@ const CustomerForm = () => {
     if (Object.keys(error).length === 0) {
       if (id) {
         await api.updateCustomer(id, newdata);
-        setSucces(true);
+        setSuccess(true);
         setSaving(false);
-        navigate("/customer");
+        setTimeout(() => {
+          navigate("/customer");
+        }, 1000);
       } else {
         const response = await api.addCustomer(newdata);
         setSaving(false);
@@ -474,8 +476,8 @@ const CustomerForm = () => {
             back
           </Button>
         </Grid>
+        {success ? <FlashMessage /> : ""}
       </Grid>
-      {success ? <FlashMessage /> : ""}
     </div>
   );
 };

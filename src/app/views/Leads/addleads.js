@@ -143,7 +143,10 @@ const LeadForm = () => {
       if (id) {
         await api.updateLeads(id, newdata);
         setSaving(false);
-        navigate("/leads");
+        setSuccess(true);
+        setTimeout(() => {
+          navigate("/leads");
+        }, 1000);
       } else {
         const response = await api.addLead(newdata);
 

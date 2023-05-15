@@ -31,7 +31,7 @@ const Contactform = () => {
     mobilePhone: "",
     name: "",
     emailAddress: { address: "" },
-    picture: [],
+    picture: "",
     jobTitleFunction: "",
     mainAddress: "",
     isContact: "true",
@@ -60,16 +60,13 @@ const Contactform = () => {
   };
   const handleUpload = async (e) => {
     const file = e.target.files[0];
-
     const res = await api.imageUploader(file);
     setData({ ...data, picture: res });
-    // save it on your form data state
     const fileReader = new FileReader();
-    fileReader.onload = function (e) {
-      console.log("e", e);
-      setPicture(e.target.file);
+    fileReader.onloadend = function (e) {
+      const content = fileReader.result;
+      fileReader.readAsDataURL(content);
     };
-    fileReader.readAsDataURL(res);
   };
 
   console.log({ data });
@@ -91,7 +88,9 @@ const Contactform = () => {
         await api.updateContact(id, newdata);
         setSaving(false);
         setSucces(true);
-        navigate("../new");
+        setTimeout(() => {
+          navigate("/contacts");
+        }, 1000);
       } else {
         const response = await api.addContact(newdata);
         setSaving(false);

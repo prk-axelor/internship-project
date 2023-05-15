@@ -101,7 +101,9 @@ const Addopportunities = () => {
         await api.updateOpportunity(id, data);
         setSaving(false);
         setSucces(true);
-        navigate("../new");
+        setTimeout(() => {
+          navigate("/opportunities");
+        }, 1000);
       } else {
         const response = await api.addOpportunites(data);
         setSaving(false);
