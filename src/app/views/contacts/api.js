@@ -37,13 +37,16 @@ const getContact = (id) => {
         "name",
         "firstName",
         "timeSlot",
+        "picture",
       ],
       related: {
         emailAddress: ["address"],
+        picture: [],
       },
     })
     .then(({ data }) => data?.data[0]);
 };
+
 const updateContact = (id, data) => {
   return rest.post(`/${model}`, { id, data }).then(({ data }) => data?.data);
 };
@@ -95,10 +98,17 @@ const fecthAction = async (id, name) => {
     return response;
   }
 };
+const fetchImage = async (id, pictureId) => {
+  const privewImage = await rest.get(
+    `/ws/rest/com.axelor.meta.db.MetaFile/${pictureId}/content/download?image=true&v=0&parentId=${id}&parentModel=com.axelor.meta.db.MetaFile`
+  );
+  console.log("res", privewImage);
+  return privewImage;
+};
 
 const imageUploader = async (file) => {
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append("file", "binary");
   formData.append("field", undefined);
   formData.append(
     "request",
@@ -139,6 +149,7 @@ const api = {
   fecthAction,
   fetchAddress,
   imageUploader,
+  fetchImage,
 };
 
 export { api };

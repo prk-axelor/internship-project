@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import { api } from "./api";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import Box from "@mui/material/Box";
-import { Autocomplete, CircularProgress, Grid } from "@mui/material";
+import { Autocomplete, CardMedia, CircularProgress, Grid } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDebounce } from "app/services/hooks";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
@@ -31,7 +31,7 @@ const Contactform = () => {
     mobilePhone: "",
     name: "",
     emailAddress: { address: "" },
-    picture: "",
+    picture: [],
     jobTitleFunction: "",
     mainAddress: "",
     isContact: "true",
@@ -62,10 +62,12 @@ const Contactform = () => {
     const file = e.target.files[0];
     const res = await api.imageUploader(file);
     setPicture(res);
+    console.log(res);
     const fileReader = new FileReader();
     fileReader.onload = function (e) {
       setPicture(file);
     };
+    //  await api.fetchImage(id, res?.id);
     //fileReader.readAsDataURL(res?.data?.data[0]);
   };
 
@@ -77,9 +79,12 @@ const Contactform = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     let newdata = {
       ...data,
-      picture,
+      picture: {
+        id: picture?.id,
+      },
     };
     const errors = validate(data);
     setError(errors);
@@ -137,7 +142,6 @@ const Contactform = () => {
         : "",
     });
   };
-  console.log(data.mainAddress);
 
   const validate = (data) => {
     const errors = {};
@@ -314,7 +318,12 @@ const Contactform = () => {
         </Grid>
         <Grid item xs={12} sm={6}>
           {picture && (
-            <img src={picture.fileType} alt="" width={100} height={100} />
+            <img
+              src={`/ws/rest/com.axelor.meta.db.MetaFile/${picture.id}/content/download?image=true&v=0&parentId=${id}&parentModel=com.axelor.meta.db.MetaFile`}
+              alt=""
+              width={100}
+              height={100}
+            />
           )}
         </Grid>
 

@@ -93,16 +93,6 @@ const LeadForm = () => {
     });
   };
 
-  const handleCountryChange = (e, value) => {
-    setData({
-      ...data,
-      primaryCountry: {
-        id: value?.id || "",
-        name: value?.name || "",
-        $version: value?.version || "",
-      },
-    });
-  };
   const handleCityChange = async (e, value) => {
     const response = await api.fecthAction(value?.id, value?.fullName);
     if (response && response.data.status === 0) {
@@ -146,12 +136,8 @@ const LeadForm = () => {
         await api.updateLeads(id, newdata);
         setSaving(false);
         setSuccess(true);
-        setTimeout(() => {
-          navigate("/leads");
-        }, 1000);
       } else {
         const response = await api.addLead(newdata);
-
         const { data: userData, status } = response;
         if (userData && status === 0) {
           navigate(`../${userData[0].id}`);
@@ -187,14 +173,6 @@ const LeadForm = () => {
     fetchOptions(fetchCity, setCity);
     fetchOptions(fetchCountry, setCountry);
   }, [fetchJob, fetchCity, fetchCountry]);
-
-  const countryOps = country?.map((a) => {
-    return {
-      name: a?.name || "",
-      $version: a?.version || "",
-      id: a?.id || "",
-    };
-  });
 
   useEffect(() => {
     if (id) {
