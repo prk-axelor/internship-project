@@ -12,7 +12,6 @@ import { useDebounce } from "app/services/hooks";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import FlashMessage from "app/components/flash-message";
 import MuiPhonenumber from "app/components/mui-phone";
-import { rest } from "../../services/rest";
 
 const CustomerForm = () => {
   const { id } = useParams();
@@ -121,11 +120,13 @@ const CustomerForm = () => {
   const handleCategoryChange = (e, value) => {
     setCustomer({
       ...customer,
-      partnerCategory: {
-        id: value?.id,
-        name: value?.name,
-        code: value?.code,
-      },
+      partnerCategory: value
+        ? {
+            id: value?.id,
+            name: value?.name,
+            code: value?.code,
+          }
+        : "",
     });
   };
   const debouncedChangeSearch = useDebounce(handleCategoryInputChange);
@@ -137,11 +138,13 @@ const CustomerForm = () => {
   const handleSourceChange = (e, value) => {
     setCustomer({
       ...customer,
-      source: {
-        id: value?.id,
-        name: value?.name,
-        code: value?.code,
-      },
+      source: value
+        ? {
+            id: value?.id,
+            name: value?.name,
+            code: value?.code,
+          }
+        : "",
     });
   };
   const handleAssignChangeSearch = async (e, value) => {
@@ -153,11 +156,13 @@ const CustomerForm = () => {
   const handleAssignChange = (e, value) => {
     setCustomer({
       ...customer,
-      user: {
-        id: value?.id || "",
-        fullName: value?.fullName || "",
-        code: value?.code || "",
-      },
+      user: value
+        ? {
+            id: value?.id || "",
+            fullName: value?.fullName || "",
+            code: value?.code || "",
+          }
+        : "",
     });
   };
 
@@ -169,11 +174,13 @@ const CustomerForm = () => {
   const handleTeamChange = (e, value) => {
     setCustomer({
       ...customer,
-      team: {
-        id: value?.id,
-        name: value?.name,
-        code: value?.code,
-      },
+      team: value
+        ? {
+            id: value?.id,
+            name: value?.name,
+            code: value?.code,
+          }
+        : "",
     });
   };
   const handleLanguageInputChange = async (e, value) => {
@@ -186,11 +193,13 @@ const CustomerForm = () => {
   const handleLanguageChange = (e, value) => {
     setCustomer({
       ...customer,
-      language: {
-        id: value?.id,
-        name: value?.name,
-        code: value?.code,
-      },
+      language: value
+        ? {
+            id: value?.id,
+            name: value?.name,
+            code: value?.code,
+          }
+        : "",
     });
   };
   const validate = (customer) => {

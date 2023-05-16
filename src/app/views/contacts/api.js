@@ -70,9 +70,8 @@ const deleteContact = (records) => {
     .post(`/${model}/removeAll`, { records })
     .then((data) => data?.data);
 };
-const fetchJob = (value) => {
+const fetchJob = () => {
   return rest.post("/ws/rest/com.axelor.apps.base.db.Function/search", {
-    data: { code: value, name: value },
     fields: ["id", "name", "code"],
   });
 };
@@ -110,11 +109,10 @@ const imageUploader = async (file) => {
         fileSize: file?.size,
         id: file?.id,
         version: file?.version,
-        $upload: { file: { file } },
+        $upload: { file: {} },
       },
     })
   );
-  console.log("formData", formData);
 
   const res = await rest.post(
     "/ws/rest/com.axelor.meta.db.MetaFile/upload",
@@ -125,12 +123,10 @@ const imageUploader = async (file) => {
       },
     }
   );
-  console.log({ res });
+
+  console.log("formData", formData);
   return res.data.data[0];
 };
-// const imageUploader = () => {
-//   return rest.post("/ws/rest/com.axelor.meta.db.MetaFile/upload", {});
-// };
 
 const api = {
   getContacts,

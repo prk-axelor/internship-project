@@ -61,15 +61,15 @@ const Contactform = () => {
   const handleUpload = async (e) => {
     const file = e.target.files[0];
     const res = await api.imageUploader(file);
-    setData({ ...data, picture: res });
+    setPicture(res);
     const fileReader = new FileReader();
-    fileReader.onloadend = function (e) {
-      const content = fileReader.result;
-      fileReader.readAsDataURL(content);
+    fileReader.onload = function (e) {
+      setPicture(file);
     };
+    //fileReader.readAsDataURL(res?.data?.data[0]);
   };
 
-  console.log({ data });
+  console.log({ picture });
 
   const handleDelete = () => {
     setPicture(null);
@@ -112,14 +112,16 @@ const Contactform = () => {
   const handleJobChange = async (e, value) => {
     setData({
       ...data,
-      jobTitleFunction: {
-        id: value?.id,
-        name: value?.name,
-      },
+      jobTitleFunction: value
+        ? {
+            id: value?.id || "",
+            name: value?.name || "",
+          }
+        : "",
     });
   };
-  const handleAddressInput = async (e, value) => {
-    const response = await fetchAddress(value);
+  const handleAddressInput = async (e) => {
+    const response = await fetchAddress();
     setSearchAddress(response?.data?.data);
   };
   const debouncedaddressChange = useDebounce(handleAddressInput);
@@ -127,10 +129,12 @@ const Contactform = () => {
   const handleAddressChange = async (e, value) => {
     setData({
       ...data,
-      mainAddress: {
-        id: value?.id,
-        fullName: value?.fullName,
-      },
+      mainAddress: value
+        ? {
+            id: value?.id,
+            fullName: value?.fullName,
+          }
+        : "",
     });
   };
   console.log(data.mainAddress);
@@ -195,9 +199,9 @@ const Contactform = () => {
             options={
               SearchJobTitle?.map((a) => {
                 return {
-                  name: a?.name,
-                  id: a?.id,
-                  code: a?.code,
+                  name: a?.name || "",
+                  id: a?.id || "",
+                  code: a?.code || "",
                 };
               }) || []
             }
@@ -248,14 +252,11 @@ const Contactform = () => {
           />
         </Grid>
         <Grid item sm={6}>
-          <TextField
-            type="tel"
-            label="Mobile phone"
-            variant="outlined"
-            name="mobilePhone"
-            value={data.mobilePhone || ""}
-            onChange={handleChange}
-            fullWidth
+          <MuiPhonenumber
+            customer={data}
+            setCustomer={setData}
+            label="Mobile Phone"
+            field="mobilePhone"
           />
         </Grid>
 
@@ -313,7 +314,7 @@ const Contactform = () => {
         </Grid>
         <Grid item xs={12} sm={6}>
           {picture && (
-            <img src={picture} alt="author" width={100} height={100} />
+            <img src={picture.fileType} alt="" width={100} height={100} />
           )}
         </Grid>
 

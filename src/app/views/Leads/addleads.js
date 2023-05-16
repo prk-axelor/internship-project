@@ -84,10 +84,12 @@ const LeadForm = () => {
   const handleJobChange = (e, value) => {
     setData({
       ...data,
-      jobTitleFunction: {
-        id: value?.id || "",
-        name: value?.name || "",
-      },
+      jobTitleFunction: value
+        ? {
+            id: value?.id || "",
+            name: value?.name || "",
+          }
+        : "",
     });
   };
 
@@ -318,32 +320,11 @@ const LeadForm = () => {
             </Grid>
 
             <Grid item sm={6}>
-              {data?.primaryCity ? (
-                <>
-                  <TextField
-                    disabled
-                    value={data?.primaryCountry?.name || ""}
-                    fullWidth
-                  />
-                </>
-              ) : (
-                <>
-                  <Autocomplete
-                    options={countryOps}
-                    getOptionLabel={(option) => {
-                      return option.name || "";
-                    }}
-                    isOptionEqualToValue={(option, value) =>
-                      option.value === value.value || ""
-                    }
-                    fullWidth
-                    onChange={handleCountryChange}
-                    renderInput={(params) => (
-                      <TextField {...params} label="country" />
-                    )}
-                  />
-                </>
-              )}
+              <TextField
+                disabled
+                value={data?.primaryCountry?.name || ""}
+                fullWidth
+              />
             </Grid>
             <Grid item sm={6}>
               <TextField
@@ -364,7 +345,7 @@ const LeadForm = () => {
                   }) || []
                 }
                 getOptionLabel={(option) => option?.name || ""}
-                value={data?.jobTitleFunction || null}
+                value={data?.jobTitleFunction || ""}
                 fullWidth
                 isOptionEqualToValue={(option, value) => {
                   return option?.value === value?.value;

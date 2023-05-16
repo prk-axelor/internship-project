@@ -49,11 +49,13 @@ const Addopportunities = () => {
   const handleCurrencyChange = (e, value) => {
     setData({
       ...data,
-      currency: {
-        id: value?.id,
-        name: value?.name,
-        code: value?.code,
-      },
+      currency: value
+        ? {
+            id: value?.id,
+            name: value?.name,
+            code: value?.code,
+          }
+        : "",
     });
   };
   const handleSourceInputChange = async (e, value) => {
@@ -64,11 +66,13 @@ const Addopportunities = () => {
   const handleSourceChange = (e, value) => {
     setData({
       ...data,
-      source: {
-        id: value?.id,
-        name: value?.name,
-        code: value?.code,
-      },
+      source: value
+        ? {
+            id: value?.id,
+            name: value?.name,
+            code: value?.code,
+          }
+        : "",
     });
   };
   const handleTypeInputChange = async (e, value) => {
@@ -80,11 +84,13 @@ const Addopportunities = () => {
   const handleTypeChange = (e, value) => {
     setData({
       ...data,
-      opportunityType: {
-        id: value?.id,
-        name: value?.name,
-        code: value?.code,
-      },
+      opportunityType: value
+        ? {
+            id: value?.id,
+            name: value?.name,
+            code: value?.code,
+          }
+        : "",
     });
   };
 
