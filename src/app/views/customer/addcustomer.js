@@ -2,16 +2,20 @@ import React from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { api } from "./api";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Autocomplete, Grid } from "@mui/material";
 import { useDebounce } from "app/services/hooks";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import FlashMessage from "app/components/flash-message";
 import MuiPhonenumber from "app/components/mui-phone";
+
+const path = {
+  card: "customer",
+  list: "customer/list",
+};
 
 const CustomerForm = () => {
   const { id } = useParams();
@@ -50,6 +54,12 @@ const CustomerForm = () => {
   const [team, setTeam] = useState([]);
   const [language, setLanguage] = useState([]);
   const [success, setSuccess] = useState(false);
+  const { state } = useLocation();
+  const [view, setView] = useState("");
+
+  React.useEffect(() => {
+    setView(state?.view);
+  }, [state?.view]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -80,7 +90,6 @@ const CustomerForm = () => {
     };
     fileReader.readAsDataURL(res);
   };
-  console.log("formData", picture);
 
   const handleSubmit = async (e) => {
     let newdata = {
@@ -95,15 +104,24 @@ const CustomerForm = () => {
         await api.updateCustomer(id, newdata);
         setSuccess(true);
         setSaving(false);
-        setTimeout(() => {
-          navigate("/customer");
-        }, 1000);
       } else {
         const response = await api.addCustomer(newdata);
         setSaving(false);
         const { data: d, status } = response;
         if (d && status === 0) {
-          navigate(`../${d[0].id}`);
+          if (view === "card") {
+            navigate(`../${d[0].id}`, {
+              state: {
+                view: "card",
+              },
+            });
+          } else {
+            navigate(`../${d[0].id}`, {
+              state: {
+                view: "list",
+              },
+            });
+          }
         }
       }
     }
@@ -184,9 +202,7 @@ const CustomerForm = () => {
     });
   };
   const handleLanguageInputChange = async (e, value) => {
-    // console.log("e value >>>", { e, value });
     const response = await fetchLanguage(value);
-    // console.log("response >>>", response);
     setLanguage(response?.data?.data);
   };
   const debouncedLanguageChangeSearch = useDebounce(handleLanguageInputChange);
@@ -210,6 +226,8 @@ const CustomerForm = () => {
 
     return error;
   };
+
+  console.log(view);
 
   useEffect(() => {
     if (id) {
@@ -244,19 +262,6 @@ const CustomerForm = () => {
     );
   }
 
-  // console.log(
-  //   (async () => {
-  //     await console.log(assign);
-  //   })()
-  // );
-
-  // console.log("options >>>", {
-  //   category,
-  //   source,
-  //   assign,
-  //   team,
-  //   language,
-  // });
   return (
     <div>
       <center>{id ? <h1> update Customer</h1> : <h1>add Customer</h1>}</center>
@@ -477,7 +482,7 @@ const CustomerForm = () => {
           )}
 
           <Button
-            onClick={() => navigate("/customer")}
+            onClick={() => navigate(-1)}
             variant="outlined"
             color="secondary"
             sx={{ mr: 1 }}
@@ -485,7 +490,11 @@ const CustomerForm = () => {
             back
           </Button>
         </Grid>
-        {success ? <FlashMessage /> : ""}
+        {success ? (
+          <FlashMessage
+            path={view === "card" ? `${path.card}` : `${path.list}`}
+          />
+        ) : null}
       </Grid>
     </div>
   );

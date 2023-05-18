@@ -122,7 +122,12 @@ export function CustomerList() {
             justifyContent: "space-between",
           }}
         >
-          <Button onClick={() => navigate("../new")} variant="outlined">
+          <Button
+            onClick={() => {
+              navigate("../new", { state: { view: "list" } });
+            }}
+            variant="outlined"
+          >
             <Add color="secondary" />
           </Button>
           <div
@@ -156,8 +161,8 @@ export function CustomerList() {
             </Button>
           </div>
         </div>
-        <Button variant="outlined">
-          <DashboardIcon onClick={() => navigate("../")} color="secondary" />
+        <Button onClick={() => navigate("../")} variant="outlined">
+          <DashboardIcon color="secondary" />
         </Button>
       </div>
 
@@ -218,7 +223,11 @@ export function CustomerList() {
                           </TableCell>
                           <TableCell>
                             <ModeEditIcon
-                              onClick={() => navigate(`../${d.id}`)}
+                              onClick={() =>
+                                navigate(`../${d.id}`, {
+                                  state: { view: "list" },
+                                })
+                              }
                               color="secondary"
                             />
                           </TableCell>

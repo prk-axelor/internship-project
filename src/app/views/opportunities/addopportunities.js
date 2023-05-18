@@ -7,7 +7,7 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { api } from "./api";
 import { useDebounce } from "app/services/hooks";
 import FlashMessage from "app/components/flash-message";
@@ -36,6 +36,12 @@ const Addopportunities = () => {
   const [currency, setcurrency] = useState([]);
   const [oppertunity, setOppertunity] = useState([]);
   const [success, setSucces] = useState(false);
+  const { state } = useLocation();
+  const [view, setView] = useState("");
+  const path = {
+    card: "opportunities",
+    list: "opportunities/list",
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -93,7 +99,11 @@ const Addopportunities = () => {
         : "",
     });
   };
+  useEffect(() => {
+    setView(state.view);
+  }, [state.view]);
 
+  console.log("view", view);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validate(data);
@@ -107,15 +117,25 @@ const Addopportunities = () => {
         await api.updateOpportunity(id, data);
         setSaving(false);
         setSucces(true);
-        setTimeout(() => {
-          navigate("/opportunities");
-        }, 1000);
       } else {
         const response = await api.addOpportunites(data);
         setSaving(false);
         const { data: d, status } = response;
         if (d && status === 0) {
-          navigate(`../${d[0].id}`);
+          // navigate(`../${d[0].id}`,{if(view==="card"){}});
+          if (view === "card") {
+            navigate(`../${d[0].id}`, {
+              state: {
+                view: "card",
+              },
+            });
+          } else {
+            navigate(`../${d[0].id}`, {
+              state: {
+                view: "list",
+              },
+            });
+          }
         }
       }
     }
@@ -329,7 +349,7 @@ const Addopportunities = () => {
               </Button>
             )}
             <Button
-              onClick={() => navigate("/opportunities")}
+              onClick={() => navigate(-1)}
               variant="outlined"
               color="secondary"
               sx={{ mr: 1 }}
@@ -338,7 +358,13 @@ const Addopportunities = () => {
             </Button>
           </Grid>
         </Grid>
-        {success ? <FlashMessage /> : ""}
+        {success ? (
+          <FlashMessage
+            path={view === "card" ? `${path.card}` : `${path.list}`}
+          />
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );

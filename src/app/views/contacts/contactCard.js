@@ -81,7 +81,10 @@ export function ContactsCard() {
             justifyContent: "space-between",
           }}
         >
-          <Button onClick={() => navigate("./new")} variant="outlined">
+          <Button
+            onClick={() => navigate("./new", { state: { view: "card" } })}
+            variant="outlined"
+          >
             <Add color="secondary" />
           </Button>
           <div
@@ -115,8 +118,8 @@ export function ContactsCard() {
             </Button>
           </div>
         </div>
-        <Button variant="outlined">
-          <ListIcon onClick={() => navigate("./list")} color="secondary" />
+        <Button variant="outlined" onClick={() => navigate("./list")}>
+          <ListIcon color="secondary" />
         </Button>
       </div>
       {data ? (
@@ -152,7 +155,9 @@ export function ContactsCard() {
                       <Grid item padding={2}>
                         <Card
                           // sx={{ height: 185 }}
-                          onClick={() => navigate(`${d.id}`)}
+                          onClick={() =>
+                            navigate(`${d.id}`, { state: { view: "card" } })
+                          }
                         >
                           <CardActionArea>
                             <CardContent>

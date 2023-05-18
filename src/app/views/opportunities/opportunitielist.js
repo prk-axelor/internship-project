@@ -111,7 +111,10 @@ const Opportunitielist = () => {
             justifyContent: "space-between",
           }}
         >
-          <Button onClick={() => navigate("../new")} variant="outlined">
+          <Button
+            onClick={() => navigate("../new", { state: { view: "list" } })}
+            variant="outlined"
+          >
             <Add color="secondary" />
           </Button>
           <div
@@ -148,8 +151,8 @@ const Opportunitielist = () => {
             </Button>
           </div>
         </div>
-        <Button variant="outlined">
-          <DashboardIcon onClick={() => navigate("../")} color="secondary" />
+        <Button variant="outlined" onClick={() => navigate("../")}>
+          <DashboardIcon color="secondary" />
         </Button>
       </div>
       {data ? (
@@ -205,7 +208,11 @@ const Opportunitielist = () => {
                             </TableCell>
                             <TableCell>
                               <ModeEditIcon
-                                onClick={() => navigate(`../${d.id}`)}
+                                onClick={() =>
+                                  navigate(`../${d.id}`, {
+                                    state: { view: "list" },
+                                  })
+                                }
                                 color="secondary"
                               />
                             </TableCell>

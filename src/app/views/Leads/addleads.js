@@ -41,7 +41,6 @@ const LeadForm = () => {
   const [loading, setLoading] = useState(false);
   const [jobDesc, setJobDesc] = useState([]);
   const [city, setCity] = useState([]);
-  const [country, setCountry] = useState([""]);
   const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
@@ -74,8 +73,8 @@ const LeadForm = () => {
     setPicture(null);
   };
 
-  const handleJobInputchange = async (e, value) => {
-    const response = await fetchJob(value);
+  const handleJobInputchange = async (e) => {
+    const response = await fetchJob();
 
     setJobDesc(response?.data?.data);
   };
@@ -171,7 +170,6 @@ const LeadForm = () => {
     };
     fetchOptions(fetchJob, setJobDesc);
     fetchOptions(fetchCity, setCity);
-    fetchOptions(fetchCountry, setCountry);
   }, [fetchJob, fetchCity, fetchCountry]);
 
   useEffect(() => {
@@ -191,8 +189,6 @@ const LeadForm = () => {
       </Box>
     );
   }
-
-  console.log(data);
 
   return (
     <>
@@ -285,7 +281,14 @@ const LeadForm = () => {
 
             <Grid item sm={6}>
               <Autocomplete
-                options={city}
+                options={
+                  city?.map((a) => {
+                    return {
+                      fullName: a?.fullName || "",
+                      id: a?.id || "",
+                    };
+                  }) || []
+                }
                 getOptionLabel={(option) => option?.fullName || ""}
                 value={data?.primaryCity || null}
                 fullWidth
@@ -390,16 +393,16 @@ const LeadForm = () => {
                 </Button>
               )}
               <Button
-                onClick={() => navigate("/leads")}
+                onClick={() => navigate(-1)}
                 variant="outlined"
                 color="secondary"
                 sx={{ mr: 1 }}
               >
                 back
               </Button>
+              {success ? <FlashMessage path="leads" /> : ""}
             </Grid>
           </Grid>
-          {success ? <FlashMessage /> : ""}
         </div>
       </div>
     </>

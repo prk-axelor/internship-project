@@ -12,7 +12,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "./api";
-
 import { Add, Search } from "@mui/icons-material";
 import ListIcon from "@mui/icons-material/List";
 import { Container } from "@mui/system";
@@ -38,7 +37,6 @@ const CustomerCard = () => {
         })
         .then(({ data, total }) => {
           setData(data);
-
           setTotal(total);
           setLoading(false);
         });
@@ -89,7 +87,10 @@ const CustomerCard = () => {
             justifyContent: "space-between",
           }}
         >
-          <Button onClick={() => navigate("./new")} variant="outlined">
+          <Button
+            onClick={() => navigate("./new", { state: { view: "card" } })}
+            variant="outlined"
+          >
             <Add color="secondary" />
           </Button>
           <div
@@ -123,8 +124,8 @@ const CustomerCard = () => {
             </Button>
           </div>
         </div>
-        <Button variant="outlined">
-          <ListIcon onClick={() => navigate("./list")} color="secondary" />
+        <Button onClick={() => navigate("./list")} variant="outlined">
+          <ListIcon color="secondary" />
         </Button>
       </div>
 
@@ -161,7 +162,9 @@ const CustomerCard = () => {
                       <Grid item padding={2}>
                         <Card
                           // sx={{ height: 185 }}
-                          onClick={() => navigate(`${d.id}`)}
+                          onClick={() =>
+                            navigate(`${d.id}`, { state: { view: "card" } })
+                          }
                         >
                           <CardActionArea>
                             <CardContent>

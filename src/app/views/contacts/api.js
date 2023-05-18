@@ -102,13 +102,14 @@ const fetchImage = async (id, pictureId) => {
   const privewImage = await rest.get(
     `/ws/rest/com.axelor.meta.db.MetaFile/${pictureId}/content/download?image=true&v=0&parentId=${id}&parentModel=com.axelor.meta.db.MetaFile`
   );
+
   console.log("res", privewImage);
   return privewImage;
 };
 
 const imageUploader = async (file) => {
   const formData = new FormData();
-  formData.append("file", "binary");
+  formData.append("file", file);
   formData.append("field", undefined);
   formData.append(
     "request",

@@ -14,7 +14,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "./api";
 import ListIcon from "@mui/icons-material/List";
-
 import { Add, Search } from "@mui/icons-material";
 import PaginationIndex from "app/components/pagination";
 
@@ -89,7 +88,10 @@ export function Opportunities() {
             justifyContent: "space-between",
           }}
         >
-          <Button onClick={() => navigate("./new")} variant="outlined">
+          <Button
+            onClick={() => navigate("./new", { state: { view: "card" } })}
+            variant="outlined"
+          >
             <Add color="secondary" />
           </Button>
           <div
@@ -126,8 +128,8 @@ export function Opportunities() {
             </Button>
           </div>
         </div>
-        <Button variant="outlined">
-          <ListIcon onClick={() => navigate("./list")} color="secondary" />
+        <Button variant="outlined" onClick={() => navigate("./list")}>
+          <ListIcon color="secondary" />
         </Button>
       </div>
 
@@ -166,7 +168,9 @@ export function Opportunities() {
                       <Grid item padding={2}>
                         <Card
                           // sx={{ height: 185 }}
-                          onClick={() => navigate(`${d.id}`)}
+                          onClick={() =>
+                            navigate(`${d.id}`, { state: { view: "card" } })
+                          }
                         >
                           <CardActionArea>
                             <CardContent>

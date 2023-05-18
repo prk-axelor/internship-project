@@ -4,13 +4,17 @@ import Button from "@mui/material/Button";
 import { api } from "./api";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import Box from "@mui/material/Box";
-import { Autocomplete, CardMedia, CircularProgress, Grid } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { Autocomplete, CircularProgress, Grid } from "@mui/material";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDebounce } from "app/services/hooks";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import MuiPhonenumber from "app/components/mui-phone";
 
 import FlashMessage from "../../components/flash-message";
+const path = {
+  card: "contacts",
+  list: "contacts/list",
+};
 
 const Contactform = () => {
   const { fetchJob, fetchAddress } = api;
@@ -22,6 +26,11 @@ const Contactform = () => {
   const [error, setError] = useState({});
   const [SearchJobTitle, setSearchJobTitle] = useState([]);
   const [address, setSearchAddress] = useState([]);
+  const [view, setView] = useState("");
+  const { state } = useLocation();
+  useEffect(() => {
+    setView(state?.view);
+  }, [state?.view]);
 
   const [data, setData] = useState({
     firstName: "",
@@ -62,16 +71,19 @@ const Contactform = () => {
     const file = e.target.files[0];
     const res = await api.imageUploader(file);
     setPicture(res);
-    console.log(res);
+
+    // console.log(res);
     const fileReader = new FileReader();
     fileReader.onload = function (e) {
       setPicture(file);
     };
-    //  await api.fetchImage(id, res?.id);
+
+    // await api.fetchImage(id, res?.id);
+
     //fileReader.readAsDataURL(res?.data?.data[0]);
   };
-
-  console.log({ picture });
+  // const privewImage = api.fetchImage(id, picture?.id);
+  //console.log({ picture });
 
   const handleDelete = () => {
     setPicture(null);
@@ -93,21 +105,29 @@ const Contactform = () => {
         await api.updateContact(id, newdata);
         setSaving(false);
         setSucces(true);
-        setTimeout(() => {
-          navigate("/contacts");
-        }, 1000);
       } else {
         const response = await api.addContact(newdata);
         setSaving(false);
         const { data: d, status } = response;
         if (d && status === 0) {
-          navigate(`../${d[0].id}`);
-          setSaving(false);
+          if (view === "card") {
+            navigate(`../${d[0].id}`, {
+              state: {
+                view: "card",
+              },
+            });
+          } else {
+            navigate(`../${d[0].id}`, {
+              state: {
+                view: "list",
+              },
+            });
+          }
         }
       }
     }
   };
-
+  console.log("view", view);
   const handleJobInputchange = async (e, value) => {
     const response = await fetchJob(value);
     setSearchJobTitle(response?.data?.data);
@@ -211,9 +231,7 @@ const Contactform = () => {
             }
             value={data?.jobTitleFunction || null}
             fullWidth
-            getOptionLabel={(option) => {
-              return (option.id && `${option?.name}-${option?.id}`) || "";
-            }}
+            getOptionLabel={(option) => option?.name || ""}
             isOptionEqualToValue={(option, value) => {
               return option?.value === value?.value;
             }}
@@ -319,7 +337,7 @@ const Contactform = () => {
         <Grid item xs={12} sm={6}>
           {picture && (
             <img
-              src={`/ws/rest/com.axelor.meta.db.MetaFile/${picture.id}/content/download?image=true&v=0&parentId=${id}&parentModel=com.axelor.meta.db.MetaFile`}
+              src={`/ws/rest/com.axelor.meta.db.MetaFile/${picture?.id}/content/download?image=true&v=0&parentId=${id}&parentModel=com.axelor.meta.db.MetaFile`}
               alt=""
               width={100}
               height={100}
@@ -352,7 +370,7 @@ const Contactform = () => {
             </Button>
           )}
           <Button
-            onClick={() => navigate("/contacts")}
+            onClick={() => navigate(-1)}
             variant="outlined"
             color="secondary"
             sx={{ mr: 1 }}
@@ -362,7 +380,13 @@ const Contactform = () => {
         </Grid>
       </Grid>
 
-      {success ? <FlashMessage /> : ""}
+      {success ? (
+        <FlashMessage
+          path={view === "card" ? `${path.card}` : `${path.list}`}
+        />
+      ) : (
+        ""
+      )}
     </>
   );
 };

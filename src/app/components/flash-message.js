@@ -1,12 +1,16 @@
 import { Alert, Snackbar } from "@mui/material";
 import React from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const FlashMessage = () => {
+const FlashMessage = ({ path }) => {
+  const navigate = useNavigate();
+
   const [open, setOpen] = useState(true);
 
   const handleClose = () => {
     setOpen(false);
+    navigate(`/${path}`);
   };
 
   return (
