@@ -1,11 +1,6 @@
 import {
   Button,
   CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Table,
   TableBody,
   TableCell,
@@ -23,6 +18,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Add, Delete, Search } from "@mui/icons-material";
 import { Container } from "@mui/system";
 import PaginationIndex from "app/components/pagination";
+import Dailogbox from "app/components/dailog";
 const LIMIT = 5;
 const ContactList = () => {
   const [data, setData] = useState([]);
@@ -191,7 +187,7 @@ const ContactList = () => {
                   <TableBody>
                     {data?.map((d) => {
                       return (
-                        <TableRow key={d.id}>
+                        <TableRow key={d?.id}>
                           <TableCell>{d.partnerSeq}</TableCell>
                           <TableCell component="th" scope="row">
                             {d.simpleFullName}
@@ -207,7 +203,7 @@ const ContactList = () => {
                           <TableCell>
                             <Delete
                               color="secondary"
-                              onClick={() => handleOpen(d.id)}
+                              onClick={() => handleOpen(d?.id)}
                             />
                           </TableCell>
                           <TableCell>
@@ -238,33 +234,11 @@ const ContactList = () => {
       ) : (
         <center>no data found</center>
       )}
-
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Question</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Do you really want to delete the selected record(s)?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} variant="outlined" color="success">
-            cancel
-          </Button>
-          <Button
-            onClick={() => handleDelete()}
-            autoFocus
-            variant="outlined"
-            color="success"
-          >
-            ok
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Dailogbox
+        openBox={open}
+        closeBox={handleClose}
+        onDelete={handleDelete}
+      />
     </div>
   );
 };

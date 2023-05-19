@@ -16,6 +16,7 @@ const getCustomers = (reqBody = {}) => {
         "companyStr",
         "registrationCode",
       ],
+      // sortBy["-simpleFullName"],
       ...reqBody,
     })
     .then((data) => data?.data);

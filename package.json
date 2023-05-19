@@ -2,7 +2,7 @@
   "name": "internship-prachi-kapadiya",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://188.165.230.109:8080/",
+  "proxy": "http://localhost:8080/axelor-erp/",
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",

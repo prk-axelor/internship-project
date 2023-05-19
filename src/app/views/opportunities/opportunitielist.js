@@ -11,19 +11,11 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import {
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  TextField,
-} from "@mui/material";
+import { Button, CircularProgress, TextField } from "@mui/material";
 import { Add, Search } from "@mui/icons-material";
 import { Container } from "@mui/system";
 import PaginationIndex from "app/components/pagination";
+import Dailogbox from "app/components/dailog";
 const LIMIT = 5;
 const Opportunitielist = () => {
   const [data, setData] = useState([]);
@@ -236,95 +228,13 @@ const Opportunitielist = () => {
         <center>no data found</center>
       )}
 
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Question</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Do you really want to delete the selected record(s)?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} variant="outlined" color="success">
-            cancel
-          </Button>
-          <Button
-            onClick={() => handleDelete()}
-            autoFocus
-            variant="outlined"
-            color="success"
-          >
-            ok
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Dailogbox
+        openBox={open}
+        closeBox={handleClose}
+        onDelete={handleDelete}
+      />
     </div>
   );
 };
 
 export default Opportunitielist;
-// {data ? (
-//   <>
-//     <TableContainer style={{ padding: "15px", height: "50vh" }}>
-//       <Table aria-label="simple table">
-//         <TableHead>
-//           <TableRow>
-//             <TableCell>Reference</TableCell>
-//             <TableCell>Name</TableCell>
-//             <TableCell>Company</TableCell>
-//             <TableCell>Amount</TableCell>
-//             <TableCell>Expected Close Date</TableCell>
-//             <TableCell>Assign To</TableCell>
-//             <TableCell>Customer</TableCell>
-
-//             <TableCell>Delete</TableCell>
-//             <TableCell>Update</TableCell>
-//           </TableRow>
-//         </TableHead>
-//         <TableBody>
-//           {data &&
-//             data?.map((d) => {
-//               return (
-//                 <TableRow key={d.id}>
-//                   <TableCell>{d.opportunitySeq}</TableCell>
-//                   <TableCell component="th" scope="row">
-//                     {d.name}
-//                   </TableCell>
-//                   <TableCell>{d["company.name"]}</TableCell>
-//                   <TableCell>{d.amount}</TableCell>
-//                   <TableCell>{d.expectedCloseDate}</TableCell>
-//                   <TableCell>{d["user.fullName"]}</TableCell>
-//                   <TableCell>{d?.partner?.fullName}</TableCell>
-//                   <TableCell>
-//                     <DeleteIcon
-//                       color="secondary"
-//                       onClick={() => handleOpen(d.id)}
-//                     />
-//                   </TableCell>
-//                   <TableCell>
-//                     <ModeEditIcon
-//                       onClick={() => navigate(`../${d.id}`)}
-//                       color="secondary"
-//                     />
-//                   </TableCell>
-//                 </TableRow>
-//               );
-//             })}
-//         </TableBody>
-//       </Table>
-//     </TableContainer>
-
-//     <Pagination
-//       count={Math.ceil(total / LIMIT)}
-//       page={page}
-//       onChange={(event, newpage) => setPage(newpage)}
-//       color="secondary"
-//     />
-//   </>
-// ) : (
-//   <p>no records found</p>
-// )}

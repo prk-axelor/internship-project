@@ -176,6 +176,7 @@ const Contactform = () => {
     if (id) {
       setLoading(true);
       api.getContact(id).then((data) => {
+        setPicture(data?.picture);
         setData(data);
         setLoading(false);
       });
@@ -192,6 +193,27 @@ const Contactform = () => {
     fetchOptions(fetchJob, setSearchJobTitle);
     fetchOptions(fetchAddress, setSearchAddress);
   }, [fetchJob, fetchAddress]);
+  //const [imageURL, setImageURL] = useState("");
+  //console.log(picture);
+  const frontUrl = ` /ws/rest/com.axelor.meta.db.MetaFile`;
+  const backUrl = `content/download`;
+
+  // const imageURL = `http://188.165.230.109:8080${frontUrl}/${picture?.id}/${backUrl}`;
+
+  //console.log("imageURL >>>", imageURL);
+  // useEffect(async () => {
+  //   console.log("picture >>>", picture);
+  //   if (picture) {
+  //     const res = await api.fetchImage(
+  //       id,
+  //       picture.id,
+  //       picture.version,
+  //       picture.fileName
+  //     );
+  //     console.log("res >>>", res);
+  //     return () => {};
+  //   }
+  // }, [id, picture]);
 
   if (loading) {
     return (
@@ -306,7 +328,11 @@ const Contactform = () => {
             value={data?.mainAddress || null}
             fullWidth
             getOptionLabel={(option) => {
-              return (option.id && `${option?.fullName}-${option?.id}`) || "";
+              return (
+                (option.id &&
+                  `${option && option.fullName}-${option && option.id}`) ||
+                ""
+              );
             }}
             isOptionEqualToValue={(option, value) => {
               return option?.value === value?.value;
@@ -334,10 +360,11 @@ const Contactform = () => {
             </Button>
           )}
         </Grid>
+        {console.log(":::::", picture)}
         <Grid item xs={12} sm={6}>
           {picture && (
             <img
-              src={`/ws/rest/com.axelor.meta.db.MetaFile/${picture?.id}/content/download?image=true&v=0&parentId=${id}&parentModel=com.axelor.meta.db.MetaFile`}
+              src="/ws/rest/com.axelor.meta.db.MetaFile/778/content/download"
               alt=""
               width={100}
               height={100}

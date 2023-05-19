@@ -98,9 +98,17 @@ const fecthAction = async (id, name) => {
     return response;
   }
 };
-const fetchImage = async (id, pictureId) => {
+const fetchImage = async (id, pictureId, pictureVersion, fileName) => {
+  console.log("fileName >>>", fileName);
+
   const privewImage = await rest.get(
-    `/ws/rest/com.axelor.meta.db.MetaFile/${pictureId}/content/download?image=true&v=0&parentId=${id}&parentModel=com.axelor.meta.db.MetaFile`
+    `/ws/rest/com.axelor.meta.db.MetaFile/${pictureId}/content/download?image=true&v=${pictureVersion}&parentId=${id}&parentModel=com.axelor.meta.db.MetaFile`,
+    {
+      headers: {
+        "Content-Disposition": `attachment; filename="${fileName}"`,
+        "Content-Type": "application/octet-stream",
+      },
+    }
   );
 
   console.log("res", privewImage);

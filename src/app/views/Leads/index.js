@@ -11,15 +11,12 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import styles from "../../App.module.css";
 import CircularProgress from "@mui/material/CircularProgress";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import PaginationIndex from "app/components/pagination";
 import TextField from "@mui/material/TextField";
 import { Add, Delete, Search } from "@mui/icons-material";
 import { Container } from "@mui/system";
+import Dailogbox from "app/components/dailog";
+import { login } from "app/services/login";
 
 const LIMIT = 5;
 
@@ -33,6 +30,7 @@ export function LeadList() {
   const [value, setvalue] = useState("");
   const [page, setPage] = useState(Number(searchparams.get("page") || 1));
   const navigate = useNavigate();
+
   const handleDelete = () => {
     if (deleteId) {
       const lead = data.find((d) => d.id === deleteId);
@@ -233,32 +231,11 @@ export function LeadList() {
         <center>no data found</center>
       )}
 
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Question</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Do you really want to delete the selected record(s)?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} variant="outlined" color="success">
-            cancel
-          </Button>
-          <Button
-            onClick={() => handleDelete()}
-            autoFocus
-            variant="outlined"
-            color="success"
-          >
-            ok
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Dailogbox
+        openBox={open}
+        closeBox={handleClose}
+        onDelete={handleDelete}
+      />
     </div>
   );
 }

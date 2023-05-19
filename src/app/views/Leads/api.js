@@ -25,10 +25,11 @@ const getLeads = async (reqBody = {}) => {
   }
 };
 
-const deleteLeads = (records) => {
-  return rest
-    .post(`/${model}/removeAll`, { records })
-    .then((data) => data?.data);
+const deleteLeads = async (records) => {
+  const response = await rest.post(`/${model}/removeAll`, { records });
+  if (response && response.data.status !== 1) {
+    return response?.data;
+  }
 };
 const addLead = async (data) => {
   const response = await rest.post(`/${model}`, {

@@ -11,11 +11,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import Pagination from "@mui/material/Pagination";
 import TextField from "@mui/material/TextField";
 
@@ -23,6 +18,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 
 import { Button, Container } from "@mui/material";
 import { Add, Search } from "@mui/icons-material";
+import Dailogbox from "app/components/dailog";
 
 const LIMIT = 5;
 
@@ -211,7 +207,7 @@ export function CustomerList() {
                           <TableCell>{d["emailAddress.address"]}</TableCell>
                           <TableCell>{d["partnerCategory.name"]}</TableCell>
                           <TableCell>{d["fiscalPosition.code"]}</TableCell>
-                          <TableCell>{d?.registrationCode}</TableCell>
+                          <TableCell>{d && d.registrationCode}</TableCell>
                           <TableCell>{d["mainAddress.fullName"]}</TableCell>
 
                           <TableCell>{d.companyStr}</TableCell>
@@ -249,32 +245,11 @@ export function CustomerList() {
       ) : (
         <p>no records found</p>
       )}
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Question</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Do you really want to delete the selected record(s)?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} variant="outlined" color="success">
-            cancle
-          </Button>
-          <Button
-            onClick={() => handleDelete()}
-            autoFocus
-            variant="outlined"
-            color="success"
-          >
-            ok
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Dailogbox
+        openBox={open}
+        closeBox={handleClose}
+        onDelete={handleDelete}
+      />
     </>
   );
 }
