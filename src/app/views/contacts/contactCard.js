@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "./api";
-import { Button, CircularProgress, Container, Grid } from "@mui/material";
+import { CircularProgress, Container, Grid } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { CardActionArea } from "@mui/material";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import ListIcon from "@mui/icons-material/List";
-import { Add, Search } from "@mui/icons-material";
 import PaginationIndex from "app/components/pagination";
+import Navbar from "app/components/navbar";
 
 const LIMIT = 6;
 
@@ -18,7 +16,7 @@ export function ContactsCard() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [searchparams, setSearchParams] = useSearchParams();
-  const [value, setvalue] = useState("");
+  const [value, setValue] = useState("");
 
   const [page, setPage] = useState(Number(searchparams.get("page")) || 1);
   const navigate = useNavigate();
@@ -68,60 +66,19 @@ export function ContactsCard() {
 
   return (
     <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          padding: "5px",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <Button
-            onClick={() => navigate("./new", { state: { view: "card" } })}
-            variant="outlined"
-          >
-            <Add color="secondary" />
-          </Button>
-          <div
-            style={{
-              width: "80%",
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <TextField
-              id="outlined-basic"
-              label="search..."
-              variant="outlined"
-              onChange={(e) => setvalue(e.target.value)}
-              style={{ marginRight: "1em" }}
-              onKeyPress={(e) => {
-                if (value && e.key === "Enter") {
-                  handleSearch(e);
-                } else if (e.key === "Enter") {
-                  api
-                    .getContacts({ limit: LIMIT, offset: (page - 1) * LIMIT })
-                    .then(({ data, total }) => {
-                      setData(data);
-                      setTotal(total);
-                    });
-                }
-              }}
-            />
-            <Button onClick={handleSearch} variant="outlined">
-              <Search color="secondary" />
-            </Button>
-          </div>
-        </div>
-        <Button variant="outlined" onClick={() => navigate("./list")}>
-          <ListIcon color="secondary" />
-        </Button>
-      </div>
+      <Navbar
+        onSearch={handleSearch}
+        setValue={setValue}
+        path="./list"
+        add={"./new"}
+        view="card"
+        value={value}
+        api={api.getContacts}
+        limit={LIMIT}
+        page={page}
+        setData={setData}
+        setTotal={setTotal}
+      />
       {data ? (
         <>
           {loading ? (
@@ -151,10 +108,10 @@ export function ContactsCard() {
               >
                 {data?.map((d) => {
                   return (
-                    <Grid item xs={4} sm={4} md={6} key={d.id}>
+                    <Grid item xs={4} sm={4} md={4} key={d.id}>
                       <Grid item padding={2}>
                         <Card
-                          // sx={{ height: 185 }}
+                          sx={{ height: 195 }}
                           onClick={() =>
                             navigate(`${d.id}`, { state: { view: "card" } })
                           }
@@ -215,7 +172,7 @@ export function ContactsCard() {
           />
         </>
       ) : (
-        <p>no records found</p>
+        <h2 align="center">no data found!!!</h2>
       )}
     </>
   );

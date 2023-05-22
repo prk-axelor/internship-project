@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import { api } from "./api";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
 import Box from "@mui/material/Box";
 import { Autocomplete, CircularProgress, Grid } from "@mui/material";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDebounce } from "app/services/hooks";
-import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import MuiPhonenumber from "app/components/mui-phone";
-
 import FlashMessage from "../../components/flash-message";
+import Buttons from "app/components/button";
+import Pictureuploader from "app/components/pictureuploader";
 const path = {
   card: "contacts",
   list: "contacts/list",
@@ -35,7 +33,7 @@ const Contactform = () => {
   const [data, setData] = useState({
     firstName: "",
     functionBusinessCard: "",
-    timeSlot: "",
+    titleSelect: "",
     fixedPhone: "",
     mobilePhone: "",
     name: "",
@@ -72,22 +70,12 @@ const Contactform = () => {
     const res = await api.imageUploader(file);
     setPicture(res);
 
-    // console.log(res);
     const fileReader = new FileReader();
     fileReader.onload = function (e) {
       setPicture(file);
     };
-
-    // await api.fetchImage(id, res?.id);
-
-    //fileReader.readAsDataURL(res?.data?.data[0]);
   };
-  // const privewImage = api.fetchImage(id, picture?.id);
-  //console.log({ picture });
-
-  const handleDelete = () => {
-    setPicture(null);
-  };
+  console.log("picture", picture);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -127,7 +115,7 @@ const Contactform = () => {
       }
     }
   };
-  console.log("view", view);
+
   const handleJobInputchange = async (e, value) => {
     const response = await fetchJob(value);
     setSearchJobTitle(response?.data?.data);
@@ -165,8 +153,14 @@ const Contactform = () => {
 
   const validate = (data) => {
     const errors = {};
+    const regex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
     if (!data.name) {
       errors.name = "name is required";
+    }
+    if (!data.emailAddress.address) {
+      errors.address = "Email is required";
+    } else if (!regex.test(data.emailAddress.address)) {
+      errors.address = "Please enter valid email address";
     }
 
     return errors;
@@ -193,27 +187,6 @@ const Contactform = () => {
     fetchOptions(fetchJob, setSearchJobTitle);
     fetchOptions(fetchAddress, setSearchAddress);
   }, [fetchJob, fetchAddress]);
-  //const [imageURL, setImageURL] = useState("");
-  //console.log(picture);
-  const frontUrl = ` /ws/rest/com.axelor.meta.db.MetaFile`;
-  const backUrl = `content/download`;
-
-  // const imageURL = `http://188.165.230.109:8080${frontUrl}/${picture?.id}/${backUrl}`;
-
-  //console.log("imageURL >>>", imageURL);
-  // useEffect(async () => {
-  //   console.log("picture >>>", picture);
-  //   if (picture) {
-  //     const res = await api.fetchImage(
-  //       id,
-  //       picture.id,
-  //       picture.version,
-  //       picture.fileName
-  //     );
-  //     console.log("res >>>", res);
-  //     return () => {};
-  //   }
-  // }, [id, picture]);
 
   if (loading) {
     return (
@@ -275,9 +248,9 @@ const Contactform = () => {
         <Grid item sm={6}>
           <TextField
             label="Time Slot"
-            name="timeSlot"
+            name="titleSelect"
             variant="outlined"
-            value={data?.timeSlot || ""}
+            value={data?.titleSelect || ""}
             onChange={handleChange}
             fullWidth
           />
@@ -311,6 +284,8 @@ const Contactform = () => {
             value={data?.emailAddress?.address || ""}
             onChange={handleChange}
             variant="outlined"
+            error={error?.address ? true : false}
+            helperText={error?.address ? `${error.address}` : ""}
             fullWidth
           />
         </Grid>
@@ -342,68 +317,23 @@ const Contactform = () => {
             onChange={handleAddressChange}
           />
         </Grid>
-
-        <Grid item sm={6} height={150}>
-          <Button variant="contained" component="label" sx={{ mr: 1 }}>
-            <FileUploadIcon />
-            Upload File
-            <input type="file" hidden name="picture" onChange={handleUpload} />
-          </Button>
-          {picture && (
-            <Button
-              onClick={handleDelete}
-              variant="contained"
-              component="label"
-              sx={{ mr: 1 }}
-            >
-              <CancelPresentationIcon />
-            </Button>
-          )}
-        </Grid>
-        {console.log(":::::", picture)}
-        <Grid item xs={12} sm={6}>
-          {picture && (
-            <img
-              src="/ws/rest/com.axelor.meta.db.MetaFile/778/content/download"
-              alt=""
-              width={100}
-              height={100}
-            />
-          )}
-        </Grid>
+        <Pictureuploader
+          picture={picture}
+          setPicture={setPicture}
+          handleUpload={handleUpload}
+        />
 
         <Grid item xs={12} sm={6}>
           {id ? (
-            <Button
-              type="submit"
-              onClick={handleSubmit}
-              disabled={saving}
-              variant="outlined"
-              color="secondary"
-              sx={{ mr: 1 }}
-            >
+            <Buttons onClick={handleSubmit} saving={saving}>
               update
-            </Button>
+            </Buttons>
           ) : (
-            <Button
-              type="submit"
-              onClick={handleSubmit}
-              variant="outlined"
-              disabled={saving}
-              color="secondary"
-              sx={{ mr: 1 }}
-            >
+            <Buttons onClick={handleSubmit} saving={saving}>
               submit
-            </Button>
+            </Buttons>
           )}
-          <Button
-            onClick={() => navigate(-1)}
-            variant="outlined"
-            color="secondary"
-            sx={{ mr: 1 }}
-          >
-            back
-          </Button>
+          <Buttons onClick={() => navigate(-1)}>back</Buttons>
         </Grid>
       </Grid>
 

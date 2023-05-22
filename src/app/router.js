@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createHashRouter } from "react-router-dom";
 import ContactCard from "./views/contacts/contactCard";
 import Index from "app/views";
 import CustomerList from "./views/customer";
@@ -12,7 +12,7 @@ import Opportunitielist from "./views/opportunities/opportunitielist";
 import ContactList from "./views/contacts/contactList";
 import CustomerCard from "./views/customer/customercard";
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   {
     path: "/",
     element: <Index />,

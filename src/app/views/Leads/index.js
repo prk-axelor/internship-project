@@ -6,17 +6,15 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { Button } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import styles from "../../App.module.css";
 import CircularProgress from "@mui/material/CircularProgress";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import PaginationIndex from "app/components/pagination";
-import TextField from "@mui/material/TextField";
-import { Add, Delete, Search } from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 import { Container } from "@mui/system";
 import Dailogbox from "app/components/dailog";
-import { login } from "app/services/login";
+import Navbar from "app/components/navbar";
 
 const LIMIT = 5;
 
@@ -27,7 +25,7 @@ export function LeadList() {
   const [open, setOpen] = useState(false);
   const [searchparams, setSearchParams] = useSearchParams();
   const [deleteId, setDeleteId] = useState();
-  const [value, setvalue] = useState("");
+  const [value, setValue] = useState("");
   const [page, setPage] = useState(Number(searchparams.get("page") || 1));
   const navigate = useNavigate();
 
@@ -49,40 +47,40 @@ export function LeadList() {
     setOpen(true);
     setDeleteId(id);
   };
+
   const handleSearch = (e) => {
     e.preventDefault();
-    if (value) {
-      let req = {
-        data: {
-          criteria: [
-            {
-              fieldName: "name",
-              operator: "like",
-              value,
-            },
-          ],
-        },
-        limit: LIMIT,
-        offset: (page - 1) * LIMIT,
-        fields: [
-          "id",
-          "name",
-          "firstName",
-          "enterpriseName",
-          "fixedPhone",
-          "emailAddress.address",
-          "contactDate",
-        ],
-      };
 
-      api
-        .getLeads(req)
-        .then(({ data, total }) => {
-          setData(data);
-          setTotal(total);
-        })
-        .catch((error) => console.log("error", error));
-    }
+    let req = {
+      data: {
+        criteria: [
+          {
+            fieldName: "name",
+            operator: "like",
+            value: value,
+          },
+        ],
+      },
+      limit: LIMIT,
+      offset: (page - 1) * LIMIT,
+      fields: [
+        "id",
+        "name",
+        "firstName",
+        "enterpriseName",
+        "fixedPhone",
+        "emailAddress.address",
+        "contactDate",
+      ],
+    };
+
+    api
+      .getLeads(req)
+      .then(({ data }) => {
+        setData(data);
+        setTotal(1);
+      })
+      .catch((error) => console.log("error", error));
   };
 
   useEffect(() => {
@@ -106,54 +104,18 @@ export function LeadList() {
 
   return (
     <div className="App">
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          padding: "5px",
-        }}
-      >
-        <Button
-          onClick={() => navigate("./new")}
-          variant="outlined"
-          color="secondary"
-        >
-          <Add color="secondary" />
-        </Button>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <TextField
-            style={{
-              marginRight: "1em",
-            }}
-            id="outlined-basic"
-            label="search..."
-            variant="outlined"
-            onChange={(e) => setvalue(e.target.value)}
-            onKeyPress={(e) => {
-              if (value && e.key === "Enter") {
-                handleSearch(e);
-              } else if (e.key === "Enter") {
-                api
-                  .getLeads({ limit: LIMIT, offset: (page - 1) * LIMIT })
-                  .then(({ data, total }) => {
-                    setData(data);
-                    setTotal(total);
-                  });
-              }
-            }}
-          />
-
-          <Button onClick={handleSearch} variant="outlined">
-            <Search color="secondary" />
-          </Button>
-        </div>
-      </div>
-
+      <Navbar
+        onSearch={handleSearch}
+        setValue={setValue}
+        add={"./new"}
+        view="list"
+        value={value}
+        api={api.getLeads}
+        limit={LIMIT}
+        page={page}
+        setData={setData}
+        setTotal={setTotal}
+      />
       {data ? (
         <>
           {loading ? (
@@ -186,35 +148,36 @@ export function LeadList() {
                   </TableHead>
 
                   <TableBody>
-                    {data?.map((d) => {
-                      return (
-                        <TableRow key={d.id}>
-                          <TableCell>{d.id}</TableCell>
-                          <TableCell component="th" scope="row">
-                            {d.name}
-                          </TableCell>
-                          <TableCell>{d.firstName}</TableCell>
-                          <TableCell>{d.enterpriseName}</TableCell>
+                    {data &&
+                      data.map((d) => {
+                        return (
+                          <TableRow key={d.id}>
+                            <TableCell>{d.id}</TableCell>
+                            <TableCell component="th" scope="row">
+                              {d.name}
+                            </TableCell>
+                            <TableCell>{d.firstName}</TableCell>
+                            <TableCell>{d.enterpriseName}</TableCell>
 
-                          <TableCell>{d.fixedPhone}</TableCell>
-                          <TableCell>{d["emailAddress.address"]}</TableCell>
+                            <TableCell>{d.fixedPhone}</TableCell>
+                            <TableCell>{d["emailAddress.address"]}</TableCell>
 
-                          <TableCell>{d.contactDate}</TableCell>
-                          <TableCell>
-                            <Delete
-                              onClick={() => handleOpen(d.id)}
-                              color="secondary"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <ModeEditIcon
-                              onClick={() => navigate(`${d.id}`)}
-                              color="secondary"
-                            />
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
+                            <TableCell>{d.contactDate}</TableCell>
+                            <TableCell>
+                              <Delete
+                                onClick={() => handleOpen(d.id)}
+                                color="secondary"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <ModeEditIcon
+                                onClick={() => navigate(`${d.id}`)}
+                                color="secondary"
+                              />
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -228,7 +191,7 @@ export function LeadList() {
           )}
         </>
       ) : (
-        <center>no data found</center>
+        <h2 align="center">no data found!!!</h2>
       )}
 
       <Dailogbox

@@ -11,6 +11,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { api } from "./api";
 import { useDebounce } from "app/services/hooks";
 import FlashMessage from "app/components/flash-message";
+import Buttons from "app/components/button";
 
 const Addopportunities = () => {
   const { id } = useParams();
@@ -103,12 +104,11 @@ const Addopportunities = () => {
     setView(state.view);
   }, [state.view]);
 
-  console.log("view", view);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validate(data);
     setErrors(errors);
-    console.log(errors);
+
     if (!errors) {
       return;
     }
@@ -186,7 +186,7 @@ const Addopportunities = () => {
         </center>
 
         <Grid container spacing={1} style={{ width: "40%", margin: "0 auto" }}>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={12}>
             <TextField
               label="Name"
               variant="outlined"
@@ -199,17 +199,7 @@ const Addopportunities = () => {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Next step"
-              variant="outlined"
-              disabled={saving}
-              name="nextStep"
-              value={data?.nextStep || ""}
-              onChange={handleChange}
-              fullWidth
-            />
-          </Grid>
+
           <Grid item xs={12} sm={6}>
             <TextField
               label="Probability(%)"
@@ -282,7 +272,7 @@ const Addopportunities = () => {
                 <TextField {...params} label="currency" />
               )}
               getOptionLabel={(option) => {
-                return (option.id && `${option?.name}-${option?.code}`) || "";
+                return (option.id && `${option.name}-${option.code}`) || "";
               }}
               options={currency?.map((a) => {
                 return {
@@ -326,36 +316,15 @@ const Addopportunities = () => {
 
           <Grid item xs={12} sm={8} margin={10}>
             {id ? (
-              <Button
-                type="submit"
-                onClick={handleSubmit}
-                disabled={saving}
-                variant="outlined"
-                color="secondary"
-                sx={{ mr: 1 }}
-              >
+              <Buttons onClick={handleSubmit} saving={saving}>
                 update
-              </Button>
+              </Buttons>
             ) : (
-              <Button
-                type="submit"
-                onClick={handleSubmit}
-                disabled={saving}
-                variant="outlined"
-                color="secondary"
-                sx={{ mr: 1 }}
-              >
+              <Buttons onClick={handleSubmit} saving={saving}>
                 submit
-              </Button>
+              </Buttons>
             )}
-            <Button
-              onClick={() => navigate(-1)}
-              variant="outlined"
-              color="secondary"
-              sx={{ mr: 1 }}
-            >
-              back
-            </Button>
+            <Buttons onClick={() => navigate(-1)}>back</Buttons>
           </Grid>
         </Grid>
         {success ? (

@@ -13,6 +13,9 @@ import { Autocomplete } from "@mui/material";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import FlashMessage from "../../components/flash-message";
 import MuiPhonenumber from "app/components/mui-phone";
+import Buttons from "app/components/button";
+import AutoComplete from "app/components/textfield";
+//import Buttons from "app/components/button";
 
 const LeadForm = () => {
   const { id } = useParams();
@@ -32,7 +35,7 @@ const LeadForm = () => {
     primaryPostalCode: "",
     primaryState: "",
     jobTitleFunction: "",
-    // picture: [],
+    picture: [],
   });
 
   const [saving, setSaving] = useState(false);
@@ -45,7 +48,7 @@ const LeadForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e && e.target;
-    console.log({ e });
+
     setData({
       ...data,
       [name]: value,
@@ -60,6 +63,7 @@ const LeadForm = () => {
       };
       fileReader.readAsDataURL(file);
     }
+
     if (name === "address") {
       setData({
         ...data,
@@ -69,9 +73,16 @@ const LeadForm = () => {
       });
     }
   };
-  const handleDelete = () => {
-    setPicture(null);
-  };
+  // const handleUpload = async (e) => {
+  //   const file = e.target.files[0];
+  //   setPicture(file);
+
+  //   const fileReader = new FileReader();
+  //   fileReader.onload = function (e) {
+  //     setPicture(file);
+  //   };
+  // };
+  console.log("picture", picture);
 
   const handleJobInputchange = async (e) => {
     const response = await fetchJob();
@@ -145,6 +156,11 @@ const LeadForm = () => {
       }
     }
   };
+  const frontUrl = "ws/rest/com.axelor.apps.crm.db.Lead";
+  const backUrl = "picture/download";
+  const handleDelete = () => {
+    setPicture(null);
+  };
 
   const validate = (data) => {
     const errors = {};
@@ -217,7 +233,6 @@ const LeadForm = () => {
             <Grid item sm={6}>
               <TextField
                 label="Name"
-                height={150}
                 variant="outlined"
                 name="name"
                 value={data?.name || ""}
@@ -280,7 +295,7 @@ const LeadForm = () => {
             </Grid>
 
             <Grid item sm={6}>
-              <Autocomplete
+              <AutoComplete
                 options={
                   city?.map((a) => {
                     return {
@@ -289,14 +304,10 @@ const LeadForm = () => {
                     };
                   }) || []
                 }
-                getOptionLabel={(option) => option?.fullName || ""}
                 value={data?.primaryCity || null}
-                fullWidth
-                isOptionEqualToValue={(option, value) => {
-                  return option?.value === value?.value;
-                }}
-                renderInput={(params) => <TextField {...params} label="city" />}
-                onChange={handleCityChange}
+                label="city"
+                onchange={handleCityChange}
+                name={(option) => option?.fullName || ""}
               />
             </Grid>
 
@@ -316,7 +327,7 @@ const LeadForm = () => {
             </Grid>
 
             <Grid item sm={6}>
-              <Autocomplete
+              <AutoComplete
                 options={
                   jobDesc?.map((a) => {
                     return {
@@ -327,15 +338,11 @@ const LeadForm = () => {
                 }
                 getOptionLabel={(option) => option?.name || ""}
                 value={data?.jobTitleFunction || ""}
-                fullWidth
-                isOptionEqualToValue={(option, value) => {
-                  return option?.value === value?.value;
-                }}
                 renderInput={(params) => (
                   <TextField {...params} label="search" />
                 )}
                 onInputChange={debouncedChangeSearch}
-                onChange={handleJobChange}
+                onchange={handleJobChange}
               />
             </Grid>
 
@@ -347,7 +354,7 @@ const LeadForm = () => {
                   type="file"
                   hidden
                   name="picture"
-                  value={data?.picture || ""}
+                  value={(data && data.picture) || ""}
                   onChange={handleChange}
                 />
               </Button>
@@ -365,43 +372,27 @@ const LeadForm = () => {
 
             <Grid item sm={6}>
               {picture && (
-                <img src={picture} alt="author" width={100} height={100} />
+                <img
+                  src={`/${frontUrl}/${id}/${backUrl}`}
+                  alt="author"
+                  width={100}
+                  height={100}
+                />
               )}
             </Grid>
-            <Grid item sm={6}>
+            <Grid item sm={12}>
               {id ? (
-                <Button
-                  type="submit"
-                  sx={{ mr: 1 }}
-                  onClick={handleSubmit}
-                  disabled={saving}
-                  variant="outlined"
-                  color="secondary"
-                >
+                <Buttons onClick={handleSubmit} saving={saving}>
                   update
-                </Button>
+                </Buttons>
               ) : (
-                <Button
-                  type="submit"
-                  sx={{ mr: 1 }}
-                  onClick={handleSubmit}
-                  disabled={saving}
-                  variant="outlined"
-                  color="secondary"
-                >
+                <Buttons onClick={handleSubmit} saving={saving}>
                   submit
-                </Button>
+                </Buttons>
               )}
-              <Button
-                onClick={() => navigate(-1)}
-                variant="outlined"
-                color="secondary"
-                sx={{ mr: 1 }}
-              >
-                back
-              </Button>
-              {success ? <FlashMessage path="leads" /> : ""}
+              <Buttons onClick={() => navigate(-1)}>back</Buttons>
             </Grid>
+            {success ? <FlashMessage path="leads" /> : ""}
           </Grid>
         </div>
       </div>

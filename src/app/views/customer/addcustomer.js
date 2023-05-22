@@ -11,6 +11,9 @@ import { useDebounce } from "app/services/hooks";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import FlashMessage from "app/components/flash-message";
 import MuiPhonenumber from "app/components/mui-phone";
+import Buttons from "app/components/button";
+import Pictureuploader from "app/components/pictureuploader";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 
 const path = {
   card: "customer",
@@ -32,7 +35,7 @@ const CustomerForm = () => {
   const [customer, setCustomer] = useState({
     name: "",
     saleTurnover: "",
-    nbrEmployees: "",
+    taxNbr: "",
     webSite: "",
     emailAddress: { address: "" },
     fixedPhone: "",
@@ -42,6 +45,7 @@ const CustomerForm = () => {
     source: "",
     team: "",
     isCustomer: true,
+    picture: [],
   });
 
   const [saving, setSaving] = useState(false);
@@ -80,21 +84,21 @@ const CustomerForm = () => {
   };
   const handleUpload = async (e) => {
     const file = e.target.files[0];
+    const res = await api.imageUploader(file);
+    setPicture(res?.data?.data[0]);
 
-    const res = await imageUploader(file);
-    setCustomer({ ...customer, picture: res });
-    // save it on your form data state
     const fileReader = new FileReader();
     fileReader.onload = function (e) {
       setPicture(file);
     };
-    fileReader.readAsDataURL(res);
   };
-
+  console.log("picture", picture);
   const handleSubmit = async (e) => {
     let newdata = {
       ...customer,
-      picture,
+      picture: {
+        id: picture?.id || "",
+      },
     };
     e.preventDefault();
     const error = validate(customer);
@@ -125,9 +129,6 @@ const CustomerForm = () => {
         }
       }
     }
-  };
-  const handleDelete = () => {
-    setPicture(null);
   };
 
   const handleCategoryInputChange = async (e, value) => {
@@ -227,13 +228,12 @@ const CustomerForm = () => {
     return error;
   };
 
-  console.log(view);
-
   useEffect(() => {
     if (id) {
       setLoading(true);
       api.getCustomer(id).then((data) => {
         setCustomer(data);
+        setPicture(data?.picture);
         setLoading(false);
       });
     }
@@ -292,10 +292,10 @@ const CustomerForm = () => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            label="Employee(Nbr)"
-            name="nbrEmployees"
+            label="taxNbr"
+            name="taxNbr"
             type="number"
-            value={customer?.nbrEmployees || ""}
+            value={customer?.taxNbr || ""}
             onChange={handleChange}
             variant="outlined"
             fullWidth
@@ -437,58 +437,22 @@ const CustomerForm = () => {
           />
         </Grid>
 
-        <Grid item sm={6} height={150}>
-          <input type="file" name="image" onClick={handleUpload} />
-          {picture && (
-            <Button
-              onClick={handleDelete}
-              variant="contained"
-              component="label"
-              sx={{ mr: 1 }}
-            >
-              <CancelPresentationIcon />
-            </Button>
-          )}
-        </Grid>
-
-        <Grid item xs={12} sm={6}>
-          {picture && (
-            <img src={picture} alt="author" width={100} height={100} />
-          )}
-        </Grid>
+        <Pictureuploader
+          picture={picture}
+          setPicture={setPicture}
+          handleUpload={handleUpload}
+        />
         <Grid>
           {id ? (
-            <Button
-              type="submit"
-              onClick={handleSubmit}
-              disabled={saving}
-              variant="outlined"
-              color="secondary"
-              sx={{ mr: 1 }}
-            >
+            <Buttons onClick={handleSubmit} saving={saving}>
               update
-            </Button>
+            </Buttons>
           ) : (
-            <Button
-              type="submit"
-              onClick={handleSubmit}
-              disabled={saving}
-              variant="outlined"
-              color="secondary"
-              sx={{ mr: 1 }}
-            >
+            <Buttons onClick={handleSubmit} saving={saving}>
               submit
-            </Button>
+            </Buttons>
           )}
-
-          <Button
-            onClick={() => navigate(-1)}
-            variant="outlined"
-            color="secondary"
-            sx={{ mr: 1 }}
-          >
-            back
-          </Button>
+          <Buttons onClick={() => navigate(-1)}>back</Buttons>
         </Grid>
         {success ? (
           <FlashMessage

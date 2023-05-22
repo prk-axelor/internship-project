@@ -1,26 +1,23 @@
 import {
-  Button,
   Card,
   CardActionArea,
   CardContent,
   CircularProgress,
   Container,
   Grid,
-  TextField,
   Typography,
 } from "@mui/material";
 
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "./api";
-import ListIcon from "@mui/icons-material/List";
-import { Add, Search } from "@mui/icons-material";
 import PaginationIndex from "app/components/pagination";
+import Navbar from "app/components/navbar";
 
 const LIMIT = 6;
 export function Opportunities() {
   const [data, setData] = useState([]);
-  const [value, setvalue] = useState("");
+  const [value, setValue] = useState("");
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [searchparams, setSearchParams] = useSearchParams();
@@ -75,63 +72,19 @@ export function Opportunities() {
 
   return (
     <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          padding: "5px",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <Button
-            onClick={() => navigate("./new", { state: { view: "card" } })}
-            variant="outlined"
-          >
-            <Add color="secondary" />
-          </Button>
-          <div
-            style={{
-              width: "80%",
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <TextField
-              id="outlined-basic"
-              label="search..."
-              variant="outlined"
-              onChange={(e) => setvalue(e.target.value)}
-              style={{ marginRight: "1em" }}
-              onKeyPress={(e) => {
-                if (value && e.key === "Enter") {
-                  handleSearch(e);
-                } else if (e.key === "Enter") {
-                  api
-                    .getOpportunites({
-                      limit: LIMIT,
-                      offset: (page - 1) * LIMIT,
-                    })
-                    .then(({ data, total }) => {
-                      setData(data);
-                      setTotal(total);
-                    });
-                }
-              }}
-            />
-            <Button onClick={handleSearch} variant="outlined">
-              <Search color="secondary" />
-            </Button>
-          </div>
-        </div>
-        <Button variant="outlined" onClick={() => navigate("./list")}>
-          <ListIcon color="secondary" />
-        </Button>
-      </div>
+      <Navbar
+        onSearch={handleSearch}
+        setValue={setValue}
+        path="./list"
+        add={"./new"}
+        view="card"
+        value={value}
+        api={api.getOpportunites}
+        limit={LIMIT}
+        page={page}
+        setData={setData}
+        setTotal={setTotal}
+      />
 
       {data ? (
         <>
@@ -219,9 +172,7 @@ export function Opportunities() {
           />
         </>
       ) : (
-        <div>
-          <center>no records found</center>
-        </div>
+        <h2 align="center">no data found!!!</h2>
       )}
     </>
   );

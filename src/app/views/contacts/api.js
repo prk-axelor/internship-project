@@ -13,6 +13,7 @@ const getContacts = (reqBody = {}) => {
         "mainPartner.simpleFullName",
         "fixedPhone",
         "mainAddress",
+        "titleSelect",
       ],
 
       ...reqBody,
@@ -36,7 +37,7 @@ const getContact = (id) => {
         "mainAddress",
         "name",
         "firstName",
-        "timeSlot",
+        "titleSelect",
         "picture",
       ],
       related: {
@@ -98,22 +99,6 @@ const fecthAction = async (id, name) => {
     return response;
   }
 };
-const fetchImage = async (id, pictureId, pictureVersion, fileName) => {
-  console.log("fileName >>>", fileName);
-
-  const privewImage = await rest.get(
-    `/ws/rest/com.axelor.meta.db.MetaFile/${pictureId}/content/download?image=true&v=${pictureVersion}&parentId=${id}&parentModel=com.axelor.meta.db.MetaFile`,
-    {
-      headers: {
-        "Content-Disposition": `attachment; filename="${fileName}"`,
-        "Content-Type": "application/octet-stream",
-      },
-    }
-  );
-
-  console.log("res", privewImage);
-  return privewImage;
-};
 
 const imageUploader = async (file) => {
   const formData = new FormData();
@@ -158,7 +143,6 @@ const api = {
   fecthAction,
   fetchAddress,
   imageUploader,
-  fetchImage,
 };
 
 export { api };

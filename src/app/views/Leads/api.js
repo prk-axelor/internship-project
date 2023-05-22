@@ -16,6 +16,7 @@ const getLeads = async (reqBody = {}) => {
       "user",
       "jobTitleFunction",
       "primaryPostalCode",
+      "picture",
     ],
     ...reqBody,
   });

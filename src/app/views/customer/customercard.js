@@ -1,27 +1,24 @@
 import {
-  Button,
   Card,
   CardActionArea,
   CardContent,
   CircularProgress,
   Grid,
   Pagination,
-  TextField,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "./api";
-import { Add, Search } from "@mui/icons-material";
-import ListIcon from "@mui/icons-material/List";
 import { Container } from "@mui/system";
+import Navbar from "app/components/navbar";
 
 const LIMIT = 6;
 const CustomerCard = () => {
   const [data, setData] = useState([]);
   const [searchparams, setSearchParams] = useSearchParams();
   const [total, setTotal] = useState(0);
-  const [value, setvalue] = useState("");
+  const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
 
   const [page, setPage] = useState(Number(searchparams.get("page") || 1));
@@ -74,60 +71,19 @@ const CustomerCard = () => {
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          padding: "5px",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <Button
-            onClick={() => navigate("./new", { state: { view: "card" } })}
-            variant="outlined"
-          >
-            <Add color="secondary" />
-          </Button>
-          <div
-            style={{
-              width: "80%",
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <TextField
-              id="outlined-basic"
-              label="search..."
-              variant="outlined"
-              onChange={(e) => setvalue(e.target.value)}
-              style={{ marginRight: "1em" }}
-              onKeyPress={(e) => {
-                if (value && e.key === "Enter") {
-                  handleSearch(e);
-                } else if (e.key === "Enter") {
-                  api
-                    .getCustomers({ limit: LIMIT, offset: (page - 1) * LIMIT })
-                    .then(({ data, total }) => {
-                      setData(data);
-                      setTotal(total);
-                    });
-                }
-              }}
-            />
-            <Button onClick={handleSearch} variant="outlined">
-              <Search color="secondary" />
-            </Button>
-          </div>
-        </div>
-        <Button onClick={() => navigate("./list")} variant="outlined">
-          <ListIcon color="secondary" />
-        </Button>
-      </div>
+      <Navbar
+        onSearch={handleSearch}
+        setValue={setValue}
+        path="./list"
+        add={"./new"}
+        view="card"
+        value={value}
+        api={api.getCustomers}
+        limit={LIMIT}
+        page={page}
+        setData={setData}
+        setTotal={setTotal}
+      />
 
       {data ? (
         <>
@@ -161,7 +117,7 @@ const CustomerCard = () => {
                     <Grid item xs={4} sm={4} md={4} key={d.id}>
                       <Grid item padding={2}>
                         <Card
-                          // sx={{ height: 185 }}
+                          sx={{ height: 185 }}
                           onClick={() =>
                             navigate(`${d.id}`, { state: { view: "card" } })
                           }
@@ -192,7 +148,7 @@ const CustomerCard = () => {
                                 variant="body2"
                                 color="text.secondary"
                               >
-                                {d?.probability}
+                                {data && d.probability}
                               </Typography>
                               <Typography>
                                 {d["emailAddress.address"]}
@@ -215,7 +171,7 @@ const CustomerCard = () => {
           />
         </>
       ) : (
-        <p>no records found</p>
+        <h2 align="center">no data found!!!</h2>
       )}
     </div>
   );

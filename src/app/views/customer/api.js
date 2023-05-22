@@ -15,8 +15,9 @@ const getCustomers = (reqBody = {}) => {
         "registrationCode",
         "companyStr",
         "registrationCode",
+        "taxNbr",
       ],
-      // sortBy["-simpleFullName"],
+
       ...reqBody,
     })
     .then((data) => data?.data);
@@ -35,6 +36,8 @@ const searchCustomer = (data) => {
       "registrationCode",
       "probability",
       "emailAddress.address",
+      "taxNbr",
+      "picture",
     ],
     ...data,
   });
@@ -56,16 +59,18 @@ const getCustomer = (id) => {
         "companyStr",
         "registrationCode",
         "saleTurnover",
-        "nbrEmployees",
+        "taxNbr",
         "webSite",
         "partnerCategory",
         "source",
         "user",
         "team",
         "language",
+        "picture",
       ],
       related: {
         emailAddress: ["address"],
+        picture: [],
       },
     })
     .then(({ data }) => data?.data[0]);
@@ -131,7 +136,6 @@ const fetchLanguage = async (value) => {
   return res || [];
 };
 const imageUploader = async (file) => {
-  console.log("file:", file);
   const formData = new FormData();
   formData.append("file", file);
   formData.append("field", undefined);
@@ -158,7 +162,7 @@ const imageUploader = async (file) => {
       },
     }
   );
-  console.log({ res });
+
   return res;
 };
 const api = {

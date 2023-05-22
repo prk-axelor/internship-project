@@ -1,5 +1,4 @@
 import {
-  Button,
   CircularProgress,
   Table,
   TableBody,
@@ -7,18 +6,17 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
 } from "@mui/material";
-import DashboardIcon from "@mui/icons-material/Dashboard";
+
 import React, { useEffect, useState } from "react";
 import { api } from "./api";
-
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Add, Delete, Search } from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 import { Container } from "@mui/system";
 import PaginationIndex from "app/components/pagination";
 import Dailogbox from "app/components/dailog";
+import Navbar from "app/components/navbar";
 const LIMIT = 5;
 const ContactList = () => {
   const [data, setData] = useState([]);
@@ -28,7 +26,7 @@ const ContactList = () => {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(Number(searchparams.get("page")) || 1);
   const [loading, setLoading] = useState(false);
-  const [value, setvalue] = useState("");
+  const [value, setValue] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -70,84 +68,42 @@ const ContactList = () => {
   };
   const handleSearch = (e) => {
     e.preventDefault();
-    if (value) {
-      let req = {
-        data: {
-          criteria: [
-            {
-              fieldName: "simpleFullName",
-              operator: "like",
-              value,
-            },
-          ],
-        },
-      };
-      api
-        .getContacts(req)
-        .then(({ data }) => {
-          setData(data);
-          setTotal(1);
-        })
-        .catch((error) => console.log("error", error));
-    }
+
+    let req = {
+      data: {
+        criteria: [
+          {
+            fieldName: "simpleFullName",
+            operator: "like",
+            value,
+          },
+        ],
+      },
+    };
+    api
+      .getContacts(req)
+      .then(({ data }) => {
+        setData(data);
+        setTotal(1);
+      })
+      .catch((error) => console.log("error", error));
   };
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          padding: "5px",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <Button
-            onClick={() => navigate("../new", { state: { view: "list" } })}
-            variant="outlined"
-          >
-            <Add color="secondary" />
-          </Button>
-          <div
-            style={{
-              width: "80%",
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <TextField
-              id="outlined-basic"
-              label="search..."
-              variant="outlined"
-              onChange={(e) => setvalue(e.target.value)}
-              style={{ marginRight: "1em" }}
-              onKeyPress={(e) => {
-                if (value && e.key === "Enter") {
-                  handleSearch(e);
-                } else if (e.key === "Enter") {
-                  api
-                    .getContacts({ limit: LIMIT, offset: (page - 1) * LIMIT })
-                    .then(({ data, total }) => {
-                      setData(data);
-                      setTotal(total);
-                    });
-                }
-              }}
-            />
-            <Button onClick={handleSearch} variant="outlined">
-              <Search color="secondary" />
-            </Button>
-          </div>
-        </div>
-        <Button variant="outlined" onClick={() => navigate("../")}>
-          <DashboardIcon color="secondary" />
-        </Button>
-      </div>
+      <Navbar
+        onSearch={handleSearch}
+        setValue={setValue}
+        path="../"
+        add={"../new"}
+        view="list"
+        value={value}
+        api={api.getContacts}
+        limit={LIMIT}
+        page={page}
+        setData={setData}
+        setTotal={setTotal}
+      />
       {data ? (
         <>
           {loading ? (
@@ -166,7 +122,7 @@ const ContactList = () => {
               <TableContainer
                 style={{
                   padding: "15px",
-                  //  height: "50vh"
+                  height: "50vh",
                 }}
               >
                 <Table aria-label="simple table">
@@ -232,7 +188,7 @@ const ContactList = () => {
           />
         </>
       ) : (
-        <center>no data found</center>
+        <h2 align="center">no data found!!!</h2>
       )}
       <Dailogbox
         openBox={open}

@@ -12,19 +12,14 @@ import CircularProgress from "@mui/material/CircularProgress";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import Pagination from "@mui/material/Pagination";
-import TextField from "@mui/material/TextField";
-
-import DashboardIcon from "@mui/icons-material/Dashboard";
-
-import { Button, Container } from "@mui/material";
-import { Add, Search } from "@mui/icons-material";
 import Dailogbox from "app/components/dailog";
+import Navbar from "app/components/navbar";
+import { Container } from "@mui/material";
 
 const LIMIT = 5;
 
 export function CustomerList() {
   const navigate = useNavigate();
-
   const [data, setData] = useState([]);
   const [total, setTotal] = useState(0);
   const [searchparams, setSearchParams] = useSearchParams();
@@ -32,7 +27,7 @@ export function CustomerList() {
   const [page, setPage] = useState(Number(searchparams.get("page")) || 1);
   const [open, setOpen] = useState(false);
   const [deleteId, setDeleteId] = useState();
-  const [value, setvalue] = useState("");
+  const [value, setValue] = useState("");
 
   const offset = (page - 1) * LIMIT;
   useEffect(() => {
@@ -79,89 +74,44 @@ export function CustomerList() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (value) {
-      let req = {
-        data: {
-          criteria: [
-            {
-              fieldName: "name",
-              operator: "like",
-              value,
-            },
-          ],
-        },
-        offset,
-        limit: LIMIT,
-      };
-      api
-        .getCustomers(req)
-        .then(({ data, total }) => {
-          setData(data);
-          setTotal(total);
-        })
-        .catch((error) => console.log("error", error));
-    }
+
+    let req = {
+      data: {
+        criteria: [
+          {
+            fieldName: "name",
+            operator: "like",
+            value,
+          },
+        ],
+      },
+      offset,
+      limit: LIMIT,
+    };
+    api
+      .getCustomers(req)
+      .then(({ data, total }) => {
+        setData(data);
+        setTotal(total);
+      })
+      .catch((error) => console.log("error", error));
   };
 
   return (
     <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          padding: "5px",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <Button
-            onClick={() => {
-              navigate("../new", { state: { view: "list" } });
-            }}
-            variant="outlined"
-          >
-            <Add color="secondary" />
-          </Button>
-          <div
-            style={{
-              width: "80%",
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <TextField
-              id="outlined-basic"
-              label="search..."
-              variant="outlined"
-              onChange={(e) => setvalue(e.target.value)}
-              style={{ marginRight: "1em" }}
-              onKeyPress={(e) => {
-                if (value && e.key === "Enter") {
-                  handleSearch(e);
-                } else if (e.key === "Enter") {
-                  api
-                    .getCustomers({ limit: LIMIT, offset: (page - 1) * LIMIT })
-                    .then(({ data, total }) => {
-                      setData(data);
-                      setTotal(total);
-                    });
-                }
-              }}
-            />
-            <Button onClick={handleSearch} variant="outlined">
-              <Search color="secondary" />
-            </Button>
-          </div>
-        </div>
-        <Button onClick={() => navigate("../")} variant="outlined">
-          <DashboardIcon color="secondary" />
-        </Button>
-      </div>
-
+      <Navbar
+        onSearch={handleSearch}
+        setValue={setValue}
+        path="../"
+        add={"../new"}
+        view="list"
+        value={value}
+        api={api.getCustomers}
+        limit={LIMIT}
+        page={page}
+        setData={setData}
+        setTotal={setTotal}
+      />
       {data ? (
         <>
           {loading ? (
@@ -243,7 +193,7 @@ export function CustomerList() {
           />
         </>
       ) : (
-        <p>no records found</p>
+        <h2 align="center">no data found!!!</h2>
       )}
       <Dailogbox
         openBox={open}

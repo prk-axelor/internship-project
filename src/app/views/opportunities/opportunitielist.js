@@ -7,15 +7,13 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import { Button, CircularProgress, TextField } from "@mui/material";
-import { Add, Search } from "@mui/icons-material";
+import { CircularProgress } from "@mui/material";
 import { Container } from "@mui/system";
 import PaginationIndex from "app/components/pagination";
 import Dailogbox from "app/components/dailog";
+import Navbar from "app/components/navbar";
 const LIMIT = 5;
 const Opportunitielist = () => {
   const [data, setData] = useState([]);
@@ -50,26 +48,25 @@ const Opportunitielist = () => {
   };
   const handleSearch = (e) => {
     e.preventDefault();
-    if (value) {
-      let req = {
-        data: {
-          criteria: [
-            {
-              fieldName: "name",
-              operator: "like",
-              value,
-            },
-          ],
-        },
-      };
-      api
-        .getOpportunites(req)
-        .then(({ data }) => {
-          setData(data);
-          setTotal(1);
-        })
-        .catch((error) => console.log("error", error));
-    }
+
+    let req = {
+      data: {
+        criteria: [
+          {
+            fieldName: "name",
+            operator: "like",
+            value,
+          },
+        ],
+      },
+    };
+    api
+      .getOpportunites(req)
+      .then(({ data }) => {
+        setData(data);
+        setTotal(1);
+      })
+      .catch((error) => console.log("error", error));
   };
   useEffect(() => {
     setLoading(true);
@@ -90,63 +87,20 @@ const Opportunitielist = () => {
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          padding: "5px",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <Button
-            onClick={() => navigate("../new", { state: { view: "list" } })}
-            variant="outlined"
-          >
-            <Add color="secondary" />
-          </Button>
-          <div
-            style={{
-              width: "80%",
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <TextField
-              id="outlined-basic"
-              label="search..."
-              variant="outlined"
-              style={{ marginRight: "1em" }}
-              onChange={(e) => setValue(e.target.value)}
-              onKeyPress={(e) => {
-                if (value && e.key === "Enter") {
-                  handleSearch(e);
-                } else if (e.key === "Enter") {
-                  api
-                    .getOpportunites({
-                      limit: LIMIT,
-                      offset: (page - 1) * LIMIT,
-                    })
-                    .then(({ data, total }) => {
-                      setData(data);
-                      setTotal(total);
-                    });
-                }
-              }}
-            />
-            <Button variant="outlined" onClick={handleSearch}>
-              <Search color="secondary" />
-            </Button>
-          </div>
-        </div>
-        <Button variant="outlined" onClick={() => navigate("../")}>
-          <DashboardIcon color="secondary" />
-        </Button>
-      </div>
+      <Navbar
+        onSearch={handleSearch}
+        setValue={setValue}
+        path="../"
+        add={"../new"}
+        view="list"
+        value={value}
+        api={api.getOpportunites}
+        limit={LIMIT}
+        page={page}
+        setData={setData}
+        setTotal={setTotal}
+      />
+
       {data ? (
         <>
           {loading ? (
@@ -225,7 +179,7 @@ const Opportunitielist = () => {
           />
         </>
       ) : (
-        <center>no data found</center>
+        <h2 align="center">no data found!!!</h2>
       )}
 
       <Dailogbox
