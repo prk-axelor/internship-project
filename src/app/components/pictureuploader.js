@@ -4,7 +4,7 @@ import FileUploadIcon from "@mui/icons-material/FileUpload";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 
 const Pictureuploader = ({ setPicture, picture, handleUpload }) => {
-  const frontUrl = "ws/rest/com.axelor.meta.db.MetaFile";
+  const frontUrl = "/axelor-erp/ws/rest/com.axelor.meta.db.MetaFile";
   const backUrl = "content/download";
   const handleDelete = () => {
     setPicture(null);
