@@ -295,7 +295,7 @@ const LeadForm = () => {
             </Grid>
 
             <Grid item sm={6}>
-              <AutoComplete
+              <Autocomplete
                 options={
                   city?.map((a) => {
                     return {
@@ -304,10 +304,14 @@ const LeadForm = () => {
                     };
                   }) || []
                 }
+                getOptionLabel={(option) => option?.fullName || ""}
                 value={data?.primaryCity || null}
-                label="city"
-                onchange={handleCityChange}
-                name={(option) => option?.fullName || ""}
+                fullWidth
+                isOptionEqualToValue={(option, value) => {
+                  return option?.value === value?.value;
+                }}
+                renderInput={(params) => <TextField {...params} label="city" />}
+                onChange={handleCityChange}
               />
             </Grid>
 
@@ -327,7 +331,7 @@ const LeadForm = () => {
             </Grid>
 
             <Grid item sm={6}>
-              <AutoComplete
+              <Autocomplete
                 options={
                   jobDesc?.map((a) => {
                     return {
@@ -338,11 +342,15 @@ const LeadForm = () => {
                 }
                 getOptionLabel={(option) => option?.name || ""}
                 value={data?.jobTitleFunction || ""}
+                fullWidth
+                isOptionEqualToValue={(option, value) => {
+                  return option?.value === value?.value;
+                }}
                 renderInput={(params) => (
                   <TextField {...params} label="search" />
                 )}
                 onInputChange={debouncedChangeSearch}
-                onchange={handleJobChange}
+                onChange={handleJobChange}
               />
             </Grid>
 
