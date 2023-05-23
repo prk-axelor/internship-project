@@ -1,21 +1,16 @@
 import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import { api } from "./api";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDebounce } from "app/services/hooks";
 import Grid from "@mui/material/Grid";
 import "react-phone-number-input/style.css";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Autocomplete } from "@mui/material";
-import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import FlashMessage from "../../components/flash-message";
 import MuiPhonenumber from "app/components/mui-phone";
-import Buttons from "app/components/button";
-import AutoComplete from "app/components/textfield";
-//import Buttons from "app/components/button";
+import Footerbutton from "app/components/footerbutton";
 
 const LeadForm = () => {
   const { id } = useParams();
@@ -73,16 +68,6 @@ const LeadForm = () => {
       });
     }
   };
-  // const handleUpload = async (e) => {
-  //   const file = e.target.files[0];
-  //   setPicture(file);
-
-  //   const fileReader = new FileReader();
-  //   fileReader.onload = function (e) {
-  //     setPicture(file);
-  //   };
-  // };
-  console.log("picture", picture);
 
   const handleJobInputchange = async (e) => {
     const response = await fetchJob();
@@ -155,11 +140,6 @@ const LeadForm = () => {
         }
       }
     }
-  };
-  const frontUrl = "ws/rest/com.axelor.apps.crm.db.Lead";
-  const backUrl = "picture/download";
-  const handleDelete = () => {
-    setPicture(null);
   };
 
   const validate = (data) => {
@@ -354,51 +334,8 @@ const LeadForm = () => {
               />
             </Grid>
 
-            <Grid item sm={6}>
-              <Button variant="contained" component="label" sx={{ mr: 1 }}>
-                <FileUploadIcon />
-                Upload File
-                <input
-                  type="file"
-                  hidden
-                  name="picture"
-                  value={(data && data.picture) || ""}
-                  onChange={handleChange}
-                />
-              </Button>
-              {picture && (
-                <Button
-                  onClick={handleDelete}
-                  variant="contained"
-                  component="label"
-                  sx={{ mr: 1 }}
-                >
-                  <CancelPresentationIcon />
-                </Button>
-              )}
-            </Grid>
-
-            <Grid item sm={6}>
-              {picture && (
-                <img
-                  src={`/${frontUrl}/${id}/${backUrl}`}
-                  alt="author"
-                  width={100}
-                  height={100}
-                />
-              )}
-            </Grid>
             <Grid item sm={12}>
-              {id ? (
-                <Buttons onClick={handleSubmit} saving={saving}>
-                  update
-                </Buttons>
-              ) : (
-                <Buttons onClick={handleSubmit} saving={saving}>
-                  submit
-                </Buttons>
-              )}
-              <Buttons onClick={() => navigate(-1)}>back</Buttons>
+              <Footerbutton handleSubmit={handleSubmit} saving={saving} />
             </Grid>
             {success ? <FlashMessage path="leads" /> : ""}
           </Grid>

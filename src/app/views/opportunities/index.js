@@ -117,10 +117,10 @@ export function Opportunities() {
               >
                 {data?.map((d) => {
                   return (
-                    <Grid item xs={4} sm={4} md={6} key={d.id}>
+                    <Grid item xs={4} sm={4} md={4} key={d.id}>
                       <Grid item padding={2}>
                         <Card
-                          // sx={{ height: 185 }}
+                          sx={{ height: 185 }}
                           onClick={() =>
                             navigate(`${d.id}`, { state: { view: "card" } })
                           }
@@ -152,7 +152,7 @@ export function Opportunities() {
                                 variant="body2"
                                 color="text.secondary"
                               >
-                                {d?.probability}
+                                {d && d.probability}
                               </Typography>
                             </CardContent>
                           </CardActionArea>

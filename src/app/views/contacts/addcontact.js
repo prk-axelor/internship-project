@@ -7,8 +7,9 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDebounce } from "app/services/hooks";
 import MuiPhonenumber from "app/components/mui-phone";
 import FlashMessage from "../../components/flash-message";
-import Buttons from "app/components/button";
+
 import Pictureuploader from "app/components/pictureuploader";
+import Footerbutton from "app/components/footerbutton";
 const path = {
   card: "contacts",
   list: "contacts/list",
@@ -33,7 +34,6 @@ const Contactform = () => {
   const [data, setData] = useState({
     firstName: "",
     functionBusinessCard: "",
-    titleSelect: "",
     fixedPhone: "",
     mobilePhone: "",
     name: "",
@@ -157,7 +157,7 @@ const Contactform = () => {
     if (!data.name) {
       errors.name = "name is required";
     }
-    if (!data.emailAddress.address) {
+    if (!data?.emailAddress?.address) {
       errors.address = "Email is required";
     } else if (!regex.test(data.emailAddress.address)) {
       errors.address = "Please enter valid email address";
@@ -206,14 +206,29 @@ const Contactform = () => {
         style={{ width: "50%", margin: "0 auto" }}
       >
         <Grid item sm={6}>
-          <MuiPhonenumber
-            customer={data}
-            setCustomer={setData}
-            label="Fixed Phone"
-            field="fixedPhone"
+          <TextField
+            label="Name"
+            variant="outlined"
+            name="name"
+            onChange={handleChange}
+            error={error?.name ? true : false}
+            helperText={error?.name ? `${error.name}` : ""}
+            value={data.name || ""}
+            fullWidth
           />
         </Grid>
+
         <Grid item sm={6}>
+          <TextField
+            label="First name"
+            variant="outlined"
+            name="firstName"
+            value={data.firstName || ""}
+            onChange={handleChange}
+            fullWidth
+          />
+        </Grid>
+        <Grid item sm={12}>
           <Autocomplete
             options={
               SearchJobTitle?.map((a) => {
@@ -235,37 +250,13 @@ const Contactform = () => {
             onChange={handleJobChange}
           />
         </Grid>
-        <Grid item sm={6}>
-          <TextField
-            label="First name"
-            variant="outlined"
-            name="firstName"
-            value={data.firstName || ""}
-            onChange={handleChange}
-            fullWidth
-          />
-        </Grid>
-        <Grid item sm={6}>
-          <TextField
-            label="Time Slot"
-            name="titleSelect"
-            variant="outlined"
-            value={data?.titleSelect || ""}
-            onChange={handleChange}
-            fullWidth
-          />
-        </Grid>
 
         <Grid item sm={6}>
-          <TextField
-            label="Name"
-            variant="outlined"
-            name="name"
-            onChange={handleChange}
-            error={error?.name ? true : false}
-            helperText={error?.name ? `${error.name}` : ""}
-            value={data.name || ""}
-            fullWidth
+          <MuiPhonenumber
+            customer={data}
+            setCustomer={setData}
+            label="Fixed Phone"
+            field="fixedPhone"
           />
         </Grid>
         <Grid item sm={6}>
@@ -317,6 +308,7 @@ const Contactform = () => {
             onChange={handleAddressChange}
           />
         </Grid>
+
         <Pictureuploader
           picture={picture}
           setPicture={setPicture}
@@ -324,16 +316,9 @@ const Contactform = () => {
         />
 
         <Grid item xs={12} sm={6}>
-          {id ? (
-            <Buttons onClick={handleSubmit} saving={saving}>
-              update
-            </Buttons>
-          ) : (
-            <Buttons onClick={handleSubmit} saving={saving}>
-              submit
-            </Buttons>
-          )}
-          <Buttons onClick={() => navigate(-1)}>back</Buttons>
+          <Grid item sm={12}>
+            <Footerbutton handleSubmit={handleSubmit} saving={saving} />
+          </Grid>
         </Grid>
       </Grid>
 
@@ -349,3 +334,4 @@ const Contactform = () => {
 };
 
 export default Contactform;
+//

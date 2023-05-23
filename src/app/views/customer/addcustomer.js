@@ -1,6 +1,5 @@
 import React from "react";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import { api } from "./api";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -8,12 +7,10 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Autocomplete, Grid } from "@mui/material";
 import { useDebounce } from "app/services/hooks";
-import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import FlashMessage from "app/components/flash-message";
 import MuiPhonenumber from "app/components/mui-phone";
-import Buttons from "app/components/button";
 import Pictureuploader from "app/components/pictureuploader";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
+import Footerbutton from "app/components/footerbutton";
 
 const path = {
   card: "customer",
@@ -22,14 +19,8 @@ const path = {
 
 const CustomerForm = () => {
   const { id } = useParams();
-  const {
-    fetchCategory,
-    fetchSource,
-    fetchAssign,
-    fetchTeam,
-    fetchLanguage,
-    imageUploader,
-  } = api;
+  const { fetchCategory, fetchSource, fetchAssign, fetchTeam, fetchLanguage } =
+    api;
   const navigate = useNavigate();
 
   const [customer, setCustomer] = useState({
@@ -363,7 +354,14 @@ const CustomerForm = () => {
 
         <Grid item xs={12} sm={6}>
           <Autocomplete
-            options={source}
+            options={
+              source?.map((a) => {
+                return {
+                  name: a?.name || "",
+                  id: a?.id || "",
+                };
+              }) || []
+            }
             isOptionEqualToValue={(option, value) =>
               option.value === value.value
             }
@@ -443,16 +441,9 @@ const CustomerForm = () => {
           handleUpload={handleUpload}
         />
         <Grid>
-          {id ? (
-            <Buttons onClick={handleSubmit} saving={saving}>
-              update
-            </Buttons>
-          ) : (
-            <Buttons onClick={handleSubmit} saving={saving}>
-              submit
-            </Buttons>
-          )}
-          <Buttons onClick={() => navigate(-1)}>back</Buttons>
+          <Grid item sm={12}>
+            <Footerbutton handleSubmit={handleSubmit} saving={saving} />
+          </Grid>
         </Grid>
         {success ? (
           <FlashMessage

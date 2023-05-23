@@ -1,7 +1,6 @@
 import {
   Autocomplete,
   Box,
-  Button,
   CircularProgress,
   Grid,
   TextField,
@@ -12,6 +11,7 @@ import { api } from "./api";
 import { useDebounce } from "app/services/hooks";
 import FlashMessage from "app/components/flash-message";
 import Buttons from "app/components/button";
+import Footerbutton from "app/components/footerbutton";
 
 const Addopportunities = () => {
   const { id } = useParams();
@@ -122,7 +122,6 @@ const Addopportunities = () => {
         setSaving(false);
         const { data: d, status } = response;
         if (d && status === 0) {
-          // navigate(`../${d[0].id}`,{if(view==="card"){}});
           if (view === "card") {
             navigate(`../${d[0].id}`, {
               state: {
@@ -247,7 +246,7 @@ const Addopportunities = () => {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={12}>
             <TextField
               type="date"
               disabled={saving}
@@ -274,18 +273,27 @@ const Addopportunities = () => {
               getOptionLabel={(option) => {
                 return (option.id && `${option.name}-${option.code}`) || "";
               }}
-              options={currency?.map((a) => {
-                return {
-                  name: a.name,
-                  id: a.id,
-                  code: a.code,
-                };
-              })}
+              options={
+                currency?.map((a) => {
+                  return {
+                    name: a.name,
+                    id: a.id,
+                    code: a.code,
+                  };
+                }) || []
+              }
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <Autocomplete
-              options={source}
+              options={
+                source?.map((a) => {
+                  return {
+                    name: a?.name,
+                    id: a?.id,
+                  };
+                }) || []
+              }
               getOptionLabel={(option) => option?.name || ""}
               value={data?.source || null}
               fullWidth
@@ -297,34 +305,9 @@ const Addopportunities = () => {
               renderInput={(params) => <TextField {...params} label="source" />}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <Autocomplete
-              options={oppertunity}
-              getOptionLabel={(option) => option?.name || ""}
-              value={data?.opportunityType || null}
-              fullWidth
-              isOptionEqualToValue={(option, value) => {
-                return option?.value === value?.value;
-              }}
-              onChange={handleTypeChange}
-              onInputChange={debouncedOppertunitySearch}
-              renderInput={(params) => (
-                <TextField {...params} label="oppertunity" />
-              )}
-            />
-          </Grid>
 
-          <Grid item xs={12} sm={8} margin={10}>
-            {id ? (
-              <Buttons onClick={handleSubmit} saving={saving}>
-                update
-              </Buttons>
-            ) : (
-              <Buttons onClick={handleSubmit} saving={saving}>
-                submit
-              </Buttons>
-            )}
-            <Buttons onClick={() => navigate(-1)}>back</Buttons>
+          <Grid item sm={12}>
+            <Footerbutton handleSubmit={handleSubmit} saving={saving} />
           </Grid>
         </Grid>
         {success ? (

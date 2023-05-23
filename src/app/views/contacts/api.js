@@ -13,7 +13,6 @@ const getContacts = (reqBody = {}) => {
         "mainPartner.simpleFullName",
         "fixedPhone",
         "mainAddress",
-        "titleSelect",
       ],
 
       ...reqBody,
@@ -37,7 +36,6 @@ const getContact = (id) => {
         "mainAddress",
         "name",
         "firstName",
-        "titleSelect",
         "picture",
       ],
       related: {
@@ -64,7 +62,6 @@ const searchContacts = (data) => {
       "fixedPhone",
       "mainAddress",
       "picture",
-      "titleSelect",
     ],
     ...data,
   });

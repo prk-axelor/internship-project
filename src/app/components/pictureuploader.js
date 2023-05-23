@@ -2,6 +2,7 @@ import { Button, Grid } from "@mui/material";
 import React from "react";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import favicon from "../favicon.png";
 
 const Pictureuploader = ({ setPicture, picture, handleUpload }) => {
   const frontUrl = "/axelor-erp/ws/rest/com.axelor.meta.db.MetaFile";
@@ -30,13 +31,15 @@ const Pictureuploader = ({ setPicture, picture, handleUpload }) => {
       </Grid>
 
       <Grid item xs={12} sm={6}>
-        {picture && (
+        {picture ? (
           <img
             src={`${frontUrl}/${picture.id}/${backUrl}`}
             alt="author"
             width={100}
             height={100}
           />
+        ) : (
+          <img src={favicon} alt="author" width={100} height={100} />
         )}
       </Grid>
     </>

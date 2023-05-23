@@ -116,6 +116,7 @@ export function LeadList() {
         setData={setData}
         setTotal={setTotal}
       />
+
       {data ? (
         <>
           {loading ? (

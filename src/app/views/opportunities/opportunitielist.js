@@ -122,7 +122,6 @@ const Opportunitielist = () => {
                     <TableRow>
                       <TableCell>Reference</TableCell>
                       <TableCell>Name</TableCell>
-                      <TableCell>Company</TableCell>
                       <TableCell>Amount</TableCell>
                       <TableCell>Expected Close Date</TableCell>
                       <TableCell>Assign To</TableCell>
@@ -141,11 +140,13 @@ const Opportunitielist = () => {
                             <TableCell component="th" scope="row">
                               {d.name}
                             </TableCell>
-                            <TableCell>{d["company.name"]}</TableCell>
+
                             <TableCell>{d.amount}</TableCell>
                             <TableCell>{d.expectedCloseDate}</TableCell>
-                            <TableCell>{d["user.fullName"]}</TableCell>
-                            <TableCell>{d?.partner?.fullName}</TableCell>
+                            <TableCell>{d.user && d.user.fullName}</TableCell>
+                            <TableCell>
+                              {d.partner && d.partner.fullName}
+                            </TableCell>
                             <TableCell>
                               <DeleteIcon
                                 color="secondary"

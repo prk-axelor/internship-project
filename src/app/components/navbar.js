@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, TextField } from "@mui/material";
 import { Add, Search } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import ListIcon from "@mui/icons-material/List";
 
 const Navbar = ({
   onSearch,
@@ -18,6 +19,11 @@ const Navbar = ({
   setTotal,
 }) => {
   const navigate = useNavigate();
+  const list = path?.includes("list");
+  const [listView, setListView] = useState();
+  useEffect(() => {
+    setListView(list);
+  }, [list]);
 
   return (
     <div>
@@ -73,9 +79,16 @@ const Navbar = ({
             </Button>
           </div>
         </div>
-        <Button onClick={() => navigate(`${path}`)} variant="outlined">
-          <DashboardIcon color="secondary" />
-        </Button>
+        {path &&
+          (listView ? (
+            <Button onClick={() => navigate(`${path}`)} variant="outlined">
+              <ListIcon color="secondary" />
+            </Button>
+          ) : (
+            <Button variant="outlined" onClick={() => navigate(`${path}`)}>
+              <DashboardIcon color="secondary" />
+            </Button>
+          ))}
       </div>
     </div>
   );

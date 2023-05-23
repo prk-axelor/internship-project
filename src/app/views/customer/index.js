@@ -96,7 +96,6 @@ export function CustomerList() {
       })
       .catch((error) => console.log("error", error));
   };
-
   return (
     <>
       <Navbar
@@ -112,6 +111,7 @@ export function CustomerList() {
         setData={setData}
         setTotal={setTotal}
       />
+
       {data ? (
         <>
           {loading ? (
