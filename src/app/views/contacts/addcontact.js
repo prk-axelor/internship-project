@@ -7,9 +7,8 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDebounce } from "app/services/hooks";
 import MuiPhonenumber from "app/components/mui-phone";
 import FlashMessage from "../../components/flash-message";
-
 import Pictureuploader from "app/components/pictureuploader";
-import Footerbutton from "app/components/footerbutton";
+import FooterButton from "app/components/footerbutton";
 const path = {
   card: "contacts",
   list: "contacts/list",
@@ -75,7 +74,6 @@ const Contactform = () => {
       setPicture(file);
     };
   };
-  console.log("picture", picture);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -317,7 +315,7 @@ const Contactform = () => {
 
         <Grid item xs={12} sm={6}>
           <Grid item sm={12}>
-            <Footerbutton handleSubmit={handleSubmit} saving={saving} />
+            <FooterButton handleSubmit={handleSubmit} saving={saving} />
           </Grid>
         </Grid>
       </Grid>
@@ -334,4 +332,3 @@ const Contactform = () => {
 };
 
 export default Contactform;
-//

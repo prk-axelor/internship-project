@@ -2,7 +2,7 @@ import React from "react";
 import Buttons from "./button";
 import { useNavigate, useParams } from "react-router-dom";
 
-const Footerbutton = ({ handleSubmit, saving }) => {
+const FooterButton = ({ handleSubmit, saving }) => {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -22,4 +22,4 @@ const Footerbutton = ({ handleSubmit, saving }) => {
   );
 };
 
-export default Footerbutton;
+export default FooterButton;

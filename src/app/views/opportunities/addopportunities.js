@@ -10,7 +10,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { api } from "./api";
 import { useDebounce } from "app/services/hooks";
 import FlashMessage from "app/components/flash-message";
-import Buttons from "app/components/button";
+
 import Footerbutton from "app/components/footerbutton";
 
 const Addopportunities = () => {
@@ -35,7 +35,6 @@ const Addopportunities = () => {
   });
   const [source, setSource] = useState([]);
   const [currency, setcurrency] = useState([]);
-  const [oppertunity, setOppertunity] = useState([]);
   const [success, setSucces] = useState(false);
   const { state } = useLocation();
   const [view, setView] = useState("");
@@ -82,24 +81,7 @@ const Addopportunities = () => {
         : "",
     });
   };
-  const handleTypeInputChange = async (e, value) => {
-    const response = await fetchOppertunityType(value);
-    setOppertunity(response?.data?.data);
-  };
-  const debouncedOppertunitySearch = useDebounce(handleTypeInputChange);
 
-  const handleTypeChange = (e, value) => {
-    setData({
-      ...data,
-      opportunityType: value
-        ? {
-            id: value?.id,
-            name: value?.name,
-            code: value?.code,
-          }
-        : "",
-    });
-  };
   useEffect(() => {
     setView(state.view);
   }, [state.view]);
@@ -147,9 +129,7 @@ const Addopportunities = () => {
       }
     };
     fetchOptions(fetchCurrency, setcurrency);
-
     fetchOptions(fetchSource, setSource);
-    fetchOptions(fetchOppertunityType, setOppertunity);
   }, [fetchCurrency, fetchSource, fetchOppertunityType]);
 
   useEffect(() => {
