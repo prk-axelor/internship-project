@@ -87,9 +87,7 @@ const CustomerForm = () => {
   const handleSubmit = async (e) => {
     let newdata = {
       ...customer,
-      picture: {
-        id: picture?.id || "",
-      },
+      picture,
     };
     e.preventDefault();
     const error = validate(customer);

@@ -25,7 +25,7 @@ const Dailogbox = ({ openBox, closeBox, onDelete }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={closeBox} variant="outlined" color="success">
-            cancle
+            cancel
           </Button>
           <Button
             onClick={onDelete}

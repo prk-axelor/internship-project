@@ -80,9 +80,7 @@ const Contactform = () => {
 
     let newdata = {
       ...data,
-      picture: {
-        id: picture?.id,
-      },
+      picture,
     };
     const errors = validate(data);
     setError(errors);

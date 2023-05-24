@@ -164,7 +164,8 @@ export function CustomerList() {
                           <TableCell>
                             <DeleteIcon
                               onClick={() => handleOpen(d.id)}
-                              color="secondary"
+                              color="error"
+                              variant="outlined"
                             />
                           </TableCell>
                           <TableCell>

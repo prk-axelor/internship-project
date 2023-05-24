@@ -33,7 +33,7 @@ const Pictureuploader = ({ setPicture, picture, handleUpload }) => {
       <Grid item xs={12} sm={6}>
         {picture ? (
           <img
-            src={`${frontUrl}/${picture.id}/${backUrl}`}
+            src={`${frontUrl}/${picture.id}/${backUrl}` || "axelor"}
             alt="author"
             width={100}
             height={100}

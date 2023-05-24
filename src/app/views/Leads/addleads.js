@@ -7,10 +7,12 @@ import Grid from "@mui/material/Grid";
 import "react-phone-number-input/style.css";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Autocomplete } from "@mui/material";
+import { Autocomplete, Button } from "@mui/material";
 import FlashMessage from "../../components/flash-message";
 import MuiPhonenumber from "app/components/mui-phone";
 import Footerbutton from "app/components/footerbutton";
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 
 const LeadForm = () => {
   const { id } = useParams();
@@ -40,6 +42,8 @@ const LeadForm = () => {
   const [jobDesc, setJobDesc] = useState([]);
   const [city, setCity] = useState([]);
   const [success, setSuccess] = useState(false);
+  const frontUrl = "axelor-erp/ws/rest/com.axelor.apps.crm.db.Lead";
+  const backUrl = "picture/download";
 
   const handleChange = (e) => {
     const { name, value } = e && e.target;
@@ -49,16 +53,6 @@ const LeadForm = () => {
       [name]: value,
     });
 
-    if (name === "picture") {
-      const file = e.target.files[0];
-
-      const fileReader = new FileReader();
-      fileReader.onload = function (e) {
-        setPicture(e.target.result);
-      };
-      fileReader.readAsDataURL(file);
-    }
-
     if (name === "address") {
       setData({
         ...data,
@@ -67,8 +61,25 @@ const LeadForm = () => {
         },
       });
     }
-  };
+    if (name === "picture") {
+      // const file = e.target.files[0];
 
+      // const fileReader = new FileReader();
+      // fileReader.onload = function (e) {
+      //   setPicture(e.target.result);
+      // };
+      // fileReader.readAsDataURL(file);
+      const file = e.target.files[0];
+      setPicture(file);
+      const fileReader = new FileReader();
+      fileReader.onload = function (e) {
+        setPicture(file);
+      };
+    }
+  };
+  const handleDelete = () => {
+    setPicture(null);
+  };
   const handleJobInputchange = async (e) => {
     const response = await fetchJob();
 
@@ -116,6 +127,7 @@ const LeadForm = () => {
     }
   };
 
+  console.log("picture", picture);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -173,6 +185,7 @@ const LeadForm = () => {
       setLoading(true);
       api.getLead(id).then((data) => {
         setData(data);
+        setPicture(data?.picture);
         setLoading(false);
       });
     }
@@ -332,6 +345,41 @@ const LeadForm = () => {
                 onInputChange={debouncedChangeSearch}
                 onChange={handleJobChange}
               />
+            </Grid>
+            <Grid item sm={6} height={150}>
+              <Button variant="contained" component="label" sx={{ mr: 1 }}>
+                <FileUploadIcon />
+                Upload File
+                <input
+                  type="file"
+                  hidden
+                  name="picture"
+                  onChange={handleChange}
+                />
+              </Button>
+              {picture && (
+                <Button
+                  onClick={handleDelete}
+                  variant="contained"
+                  component="label"
+                  sx={{ mr: 1 }}
+                >
+                  <CancelPresentationIcon />
+                </Button>
+              )}
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              {picture && (
+                <img
+                  src={`/${frontUrl}/${id}/${backUrl}?image=true`}
+                  alt="author"
+                  width={100}
+                  height={100}
+                />
+                // ) : (
+                //   <img src={favicon} alt="author" width={100} height={100} />
+              )}
             </Grid>
 
             <Grid item sm={12}>

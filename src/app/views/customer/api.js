@@ -97,7 +97,7 @@ const fetchCategory = () => {
     }
   );
 };
-const fetchSource = (value) => {
+const fetchSource = async (value) => {
   return rest.post("/ws/rest/com.axelor.apps.base.db.Source/search", {
     data: { name: value },
     fields: ["id", "name", "code"],

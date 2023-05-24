@@ -105,11 +105,11 @@ const imageUploader = async (file) => {
     "request",
     JSON.stringify({
       data: {
-        fileName: file?.name,
-        fileType: file?.type,
-        fileSize: file?.size,
-        id: file?.id,
-        version: file?.version,
+        fileName: file?.name || "",
+        fileType: file?.type || "",
+        fileSize: file?.size || "",
+        id: file?.id || "",
+        version: file?.version || "",
         $upload: { file: {} },
       },
     })
