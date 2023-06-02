@@ -1,18 +1,20 @@
 import {
+  Button,
   CircularProgress,
   Table,
   TableBody,
-  TableCell,
+
   TableContainer,
   TableHead,
   TableRow,
 } from "@mui/material";
-
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import { styled } from '@mui/material/styles';
 import React, { useEffect, useState } from "react";
 import { api } from "./api";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Delete } from "@mui/icons-material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Container } from "@mui/system";
 import PaginationIndex from "app/components/pagination";
 import Dailogbox from "app/components/dailog";
@@ -28,6 +30,25 @@ const ContactList = () => {
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState("");
   const navigate = useNavigate();
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+  }));
 
   useEffect(() => {
     setLoading(true);
@@ -119,25 +140,26 @@ const ContactList = () => {
             </Container>
           ) : (
             <>
+              <h1 align="center">Contacts</h1>
+
               <TableContainer
                 style={{
                   padding: "15px",
-                  height: "50vh",
+                  height: "60vh",
                 }}
               >
                 <Table aria-label="simple table">
                   <TableHead>
-                    <TableRow>
-                      <TableCell>Reference</TableCell>
-                      <TableCell> Name</TableCell>
-                      <TableCell>Mobile phone</TableCell>
-                      <TableCell>Fixed phone</TableCell>
-                      <TableCell>Address</TableCell>
-                      <TableCell>Main company</TableCell>
-
-                      <TableCell>Delete</TableCell>
-                      <TableCell>Update</TableCell>
-                    </TableRow>
+                    <StyledTableRow>
+                      <StyledTableCell>Reference</StyledTableCell>
+                      <StyledTableCell> Name</StyledTableCell>
+                      <StyledTableCell>Mobile phone</StyledTableCell>
+                      <StyledTableCell>Fixed phone</StyledTableCell>
+                      <StyledTableCell>Address</StyledTableCell>
+                      <StyledTableCell>Main company</StyledTableCell>
+                      <StyledTableCell>Delete</StyledTableCell>
+                      <StyledTableCell>Update</StyledTableCell>
+                    </StyledTableRow>
                   </TableHead>
 
                   <TableBody>
@@ -157,20 +179,23 @@ const ContactList = () => {
                             {d["mainPartner.simpleFullName"]}
                           </TableCell>
                           <TableCell>
-                            <Delete
-                              color="secondary"
-                              onClick={() => handleOpen(d?.id)}
-                            />
+                            <Button color="error" variant="contained" onClick={() => handleOpen(d.id)}>
+                              <DeleteIcon
+                              /></Button>
                           </TableCell>
                           <TableCell>
-                            <ModeEditIcon
-                              onClick={() =>
-                                navigate(`../${d.id}`, {
-                                  state: { view: "list" },
-                                })
-                              }
-                              color="secondary"
-                            />
+                            <Button color="secondary" variant="contained" onClick={() =>
+                              navigate(`../${d.id}`, {
+                                state: { view: "list" },
+                              })
+                            }>
+                              <ModeEditIcon
+
+
+                              />
+
+                            </Button>
+
                           </TableCell>
                         </TableRow>
                       );

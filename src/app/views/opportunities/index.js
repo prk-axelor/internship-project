@@ -103,12 +103,14 @@ export function Opportunities() {
             </Container>
           ) : (
             <>
+              <h1 align="center">Opportunites</h1>
+
               <Grid
                 item
                 container
                 margin={4}
                 style={{
-                  height: "675px",
+                  height: "600px",
                   overflow: "scroll",
                   width: "100%",
                   margin: "10px ",
@@ -117,6 +119,7 @@ export function Opportunities() {
               >
                 {data?.map((d) => {
                   return (
+
                     <Grid item xs={4} sm={4} md={4} key={d.id}>
                       <Grid item padding={2}>
                         <Card

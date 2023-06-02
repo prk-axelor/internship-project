@@ -4,7 +4,7 @@ import {
   CardContent,
   CircularProgress,
   Grid,
-  Pagination,
+
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
@@ -12,6 +12,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "./api";
 import { Container } from "@mui/system";
 import Navbar from "app/components/navbar";
+import PaginationIndex from "app/components/pagination";
 
 const LIMIT = 6;
 const CustomerCard = () => {
@@ -100,12 +101,14 @@ const CustomerCard = () => {
             </Container>
           ) : (
             <>
+              <h1 align="center">Customers</h1>
+
               <Grid
                 item
                 container
                 margin={4}
                 style={{
-                  height: "675px",
+                  height: "600px",
                   width: "100%",
                   margin: "10px ",
                   flexDirection: "row",
@@ -163,11 +166,11 @@ const CustomerCard = () => {
               </Grid>
             </>
           )}
-          <Pagination
-            count={Math.ceil(total / LIMIT)}
+          <PaginationIndex
             page={page}
-            onChange={(event, newpage) => setPage(newpage)}
-            color="secondary"
+            setPage={setPage}
+            total={total}
+            limit={LIMIT}
           />
         </>
       ) : (

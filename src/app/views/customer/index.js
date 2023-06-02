@@ -2,19 +2,21 @@ import { useEffect, useState } from "react";
 import { api } from "./api";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { styled } from '@mui/material/styles';
+
 
 import { useNavigate, useSearchParams } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import Pagination from "@mui/material/Pagination";
 import Dailogbox from "app/components/dailog";
 import Navbar from "app/components/navbar";
-import { Container } from "@mui/material";
+import { Button, Container } from "@mui/material";
+import PaginationIndex from "app/components/pagination";
 
 const LIMIT = 5;
 
@@ -28,6 +30,25 @@ export function CustomerList() {
   const [open, setOpen] = useState(false);
   const [deleteId, setDeleteId] = useState();
   const [value, setValue] = useState("");
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+  }));
 
   const offset = (page - 1) * LIMIT;
   useEffect(() => {
@@ -127,25 +148,26 @@ export function CustomerList() {
             </Container>
           ) : (
             <>
-              <TableContainer style={{ height: "50vh", width: "100%" }}>
+              <h1 align="center">Customers</h1>
+              <TableContainer style={{ height: "60vh", width: "100%" }}>
                 <Table stickyHeader>
                   <TableHead>
-                    <TableRow>
-                      <TableCell>Reference</TableCell>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Fixed Phone</TableCell>
-                      <TableCell>Email</TableCell>
-                      <TableCell>Category</TableCell>
-                      <TableCell>FiscalPosition</TableCell>
-                      <TableCell>Registration code</TableCell>
-                      <TableCell>Address</TableCell>
+                    <StyledTableRow>
+                      <StyledTableCell>Reference</StyledTableCell>
+                      <StyledTableCell>Name</StyledTableCell>
+                      <StyledTableCell>Fixed Phone</StyledTableCell>
+                      <StyledTableCell>Email</StyledTableCell>
+                      <StyledTableCell>Category</StyledTableCell>
+                      <StyledTableCell>FiscalPosition</StyledTableCell>
+                      <StyledTableCell>Registration code</StyledTableCell>
+                      <StyledTableCell>Address</StyledTableCell>
 
-                      <TableCell>Companies</TableCell>
+                      <StyledTableCell>Companies</StyledTableCell>
 
-                      <TableCell>Delete</TableCell>
+                      <StyledTableCell>Delete</StyledTableCell>
 
-                      <TableCell>Update</TableCell>
-                    </TableRow>
+                      <StyledTableCell>Update</StyledTableCell>
+                    </StyledTableRow>
                   </TableHead>
                   <TableBody>
                     {data?.map((d) => {
@@ -162,21 +184,25 @@ export function CustomerList() {
 
                           <TableCell>{d.companyStr}</TableCell>
                           <TableCell>
-                            <DeleteIcon
-                              onClick={() => handleOpen(d.id)}
-                              color="error"
-                              variant="outlined"
-                            />
+                            <Button color="error" variant="contained" onClick={() => handleOpen(d.id)}>
+
+                              <DeleteIcon
+
+                              /></Button>
                           </TableCell>
                           <TableCell>
-                            <ModeEditIcon
-                              onClick={() =>
-                                navigate(`../${d.id}`, {
-                                  state: { view: "list" },
-                                })
-                              }
-                              color="secondary"
-                            />
+                            <Button color="secondary" variant="contained" onClick={() =>
+                              navigate(`../${d.id}`, {
+                                state: { view: "list" },
+                              })
+                            }>
+                              <ModeEditIcon
+
+
+                              />
+
+                            </Button>
+
                           </TableCell>
                         </TableRow>
                       );
@@ -186,11 +212,11 @@ export function CustomerList() {
               </TableContainer>
             </>
           )}
-          <Pagination
-            count={Math.ceil(total / LIMIT)}
+          <PaginationIndex
             page={page}
-            onChange={(event, newpage) => setPage(newpage)}
-            color="secondary"
+            setPage={setPage}
+            total={total}
+            limit={LIMIT}
           />
         </>
       ) : (

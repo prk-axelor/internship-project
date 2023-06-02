@@ -2,18 +2,20 @@ import React, { useEffect, useState } from "react";
 import { api } from "./api";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import { CircularProgress } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import { Container } from "@mui/system";
 import PaginationIndex from "app/components/pagination";
 import Dailogbox from "app/components/dailog";
 import Navbar from "app/components/navbar";
+import { styled } from '@mui/material/styles';
+
 const LIMIT = 5;
 const Opportunitielist = () => {
   const [data, setData] = useState([]);
@@ -25,6 +27,26 @@ const Opportunitielist = () => {
   const [total, setTotal] = useState(0);
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+  }));
+
 
   const handleDelete = () => {
     if (deleteId) {
@@ -116,20 +138,22 @@ const Opportunitielist = () => {
             </Container>
           ) : (
             <>
-              <TableContainer style={{ padding: "15px", height: "50vh" }}>
+              <h1 align="center">Opportunites</h1>
+
+              <TableContainer style={{ padding: "15px", height: "60vh" }}>
                 <Table aria-label="simple table">
                   <TableHead>
-                    <TableRow>
-                      <TableCell>Reference</TableCell>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Amount</TableCell>
-                      <TableCell>Expected Close Date</TableCell>
-                      <TableCell>Assign To</TableCell>
-                      <TableCell>Customer</TableCell>
+                    <StyledTableRow>
+                      <StyledTableCell>Reference</StyledTableCell>
+                      <StyledTableCell>Name</StyledTableCell>
+                      <StyledTableCell>Amount</StyledTableCell>
+                      <StyledTableCell>Expected Close Date</StyledTableCell>
+                      <StyledTableCell>Assign To</StyledTableCell>
+                      <StyledTableCell>Customer</StyledTableCell>
 
-                      <TableCell>Delete</TableCell>
-                      <TableCell>Update</TableCell>
-                    </TableRow>
+                      <StyledTableCell>Delete</StyledTableCell>
+                      <StyledTableCell>Update</StyledTableCell>
+                    </StyledTableRow>
                   </TableHead>
                   <TableBody>
                     {data &&
@@ -148,20 +172,23 @@ const Opportunitielist = () => {
                               {d.partner && d.partner.fullName}
                             </TableCell>
                             <TableCell>
-                              <DeleteIcon
-                                color="secondary"
-                                onClick={() => handleOpen(d.id)}
-                              />
+                              <Button color="error" variant="contained" onClick={() => handleOpen(d.id)}>
+                                <DeleteIcon
+                                /></Button>
                             </TableCell>
                             <TableCell>
-                              <ModeEditIcon
-                                onClick={() =>
-                                  navigate(`../${d.id}`, {
-                                    state: { view: "list" },
-                                  })
-                                }
-                                color="secondary"
-                              />
+                              <Button color="secondary" variant="contained" onClick={() =>
+                                navigate(`../${d.id}`, {
+                                  state: { view: "list" },
+                                })
+                              }>
+                                <ModeEditIcon
+
+
+                                />
+
+                              </Button>
+
                             </TableCell>
                           </TableRow>
                         );

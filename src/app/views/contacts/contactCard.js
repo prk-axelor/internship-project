@@ -94,12 +94,13 @@ export function ContactsCard() {
             </Container>
           ) : (
             <>
+              <h1 align="center">Contacts</h1>
               <Grid
                 item
                 container
                 margin={4}
                 style={{
-                  height: "675px",
+                  height: "600px",
                   width: "100%",
                   margin: "10px ",
                   flexDirection: "row",

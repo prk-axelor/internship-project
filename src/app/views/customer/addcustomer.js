@@ -130,10 +130,10 @@ const CustomerForm = () => {
       ...customer,
       partnerCategory: value
         ? {
-            id: value?.id,
-            name: value?.name,
-            code: value?.code,
-          }
+          id: value?.id,
+          name: value?.name,
+          code: value?.code,
+        }
         : "",
     });
   };
@@ -148,10 +148,10 @@ const CustomerForm = () => {
       ...customer,
       source: value
         ? {
-            id: value?.id,
-            name: value?.name,
-            code: value?.code,
-          }
+          id: value?.id,
+          name: value?.name,
+          code: value?.code,
+        }
         : "",
     });
   };
@@ -166,10 +166,10 @@ const CustomerForm = () => {
       ...customer,
       user: value
         ? {
-            id: value?.id || "",
-            fullName: value?.fullName || "",
-            code: value?.code || "",
-          }
+          id: value?.id || "",
+          fullName: value?.fullName || "",
+          code: value?.code || "",
+        }
         : "",
     });
   };
@@ -184,10 +184,10 @@ const CustomerForm = () => {
       ...customer,
       team: value
         ? {
-            id: value?.id,
-            name: value?.name,
-            code: value?.code,
-          }
+          id: value?.id,
+          name: value?.name,
+          code: value?.code,
+        }
         : "",
     });
   };
@@ -201,17 +201,23 @@ const CustomerForm = () => {
       ...customer,
       language: value
         ? {
-            id: value?.id,
-            name: value?.name,
-            code: value?.code,
-          }
+          id: value?.id,
+          name: value?.name,
+          code: value?.code,
+        }
         : "",
     });
   };
   const validate = (customer) => {
     const error = {};
+    const regex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
     if (!customer.name) {
       error.name = "name is required";
+    }
+    if (!customer.emailAddress.address) {
+      error.address = "Email is required";
+    } else if (!regex.test(customer.emailAddress.address)) {
+      error.address = "Please enter valid email address";
     }
 
     return error;
@@ -305,6 +311,8 @@ const CustomerForm = () => {
             label="Email"
             name="address"
             value={customer?.emailAddress?.address || ""}
+            error={error?.address ? true : false}
+            helperText={error?.address ? `${error.address}` : ""}
             onChange={handleChange}
             variant="outlined"
             fullWidth

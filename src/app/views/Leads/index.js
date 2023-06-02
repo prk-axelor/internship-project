@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { api } from "./api";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
@@ -15,6 +15,8 @@ import { Delete } from "@mui/icons-material";
 import { Container } from "@mui/system";
 import Dailogbox from "app/components/dailog";
 import Navbar from "app/components/navbar";
+import { styled } from '@mui/material/styles';
+import { Button } from "@mui/material";
 
 const LIMIT = 5;
 
@@ -28,6 +30,27 @@ export function LeadList() {
   const [value, setValue] = useState("");
   const [page, setPage] = useState(Number(searchparams.get("page") || 1));
   const navigate = useNavigate();
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+  }));
+
+
 
   const handleDelete = () => {
     if (deleteId) {
@@ -132,20 +155,21 @@ export function LeadList() {
             </Container>
           ) : (
             <>
-              <TableContainer style={{ padding: "15px", height: "50vh" }}>
+              <h1 align="center">Leads</h1>
+              <TableContainer style={{ padding: "15px", height: "60vh" }}>
                 <Table styles={styles.Table} aria-label="simple table">
                   <TableHead>
-                    <TableRow>
-                      <TableCell>id</TableCell>
-                      <TableCell>Last name</TableCell>
-                      <TableCell>First name</TableCell>
-                      <TableCell>Enterprise</TableCell>
-                      <TableCell>Fixed phone</TableCell>
-                      <TableCell>Address</TableCell>
-                      <TableCell>ContactDate</TableCell>
-                      <TableCell>Delete</TableCell>
-                      <TableCell>Update</TableCell>
-                    </TableRow>
+                    <StyledTableRow>
+                      <StyledTableCell >id</StyledTableCell>
+                      <StyledTableCell>Last name</StyledTableCell>
+                      <StyledTableCell>First name</StyledTableCell>
+                      <StyledTableCell>Enterprise</StyledTableCell>
+                      <StyledTableCell>Fixed phone</StyledTableCell>
+                      <StyledTableCell>Address</StyledTableCell>
+                      <StyledTableCell>ContactDate</StyledTableCell>
+                      <StyledTableCell>Delete</StyledTableCell>
+                      <StyledTableCell>Update</StyledTableCell>
+                    </StyledTableRow>
                   </TableHead>
 
                   <TableBody>
@@ -165,16 +189,17 @@ export function LeadList() {
 
                             <TableCell>{d.contactDate}</TableCell>
                             <TableCell>
-                              <Delete
-                                onClick={() => handleOpen(d.id)}
-                                color="secondary"
-                              />
+
+                              <Button color="error" variant="contained" onClick={() => handleOpen(d.id)}>
+                                <Delete />
+                              </Button>
+
                             </TableCell>
                             <TableCell>
-                              <ModeEditIcon
-                                onClick={() => navigate(`${d.id}`)}
-                                color="secondary"
-                              />
+                              <Button color="secondary" variant="contained" onClick={() => navigate(`${d.id}`)}>
+                                <ModeEditIcon
+                                />
+                              </Button>
                             </TableCell>
                           </TableRow>
                         );

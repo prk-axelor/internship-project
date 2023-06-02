@@ -61,6 +61,7 @@ function Header() {
 function Content() {
   return (
     <Box component="main" flexGrow={1}>
+      
       <Outlet />
     </Box>
   );
@@ -88,7 +89,7 @@ function Layout() {
   return (
     <Box display="flex" flexDirection="column" height="100%">
       <Header />
-
+     
       <Content />
       <Footer />
     </Box>
